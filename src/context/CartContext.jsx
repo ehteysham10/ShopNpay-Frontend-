@@ -26,7 +26,7 @@ const CartProvider = ({ children }) => {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [theme, setTheme] = useState(() => {
     const saved = localStorage.getItem("theme");
-    return saved ? saved : "light";
+    return saved ? saved : "dark";
   });
 
   // Coupon handling
@@ -50,6 +50,11 @@ const CartProvider = ({ children }) => {
 
   useEffect(() => {
     localStorage.setItem("theme", theme);
+    if (theme === "dark") {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
   }, [theme]);
 
   useEffect(() => {
