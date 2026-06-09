@@ -35,7 +35,7 @@ const Register = () => {
           <form onSubmit={handleRegister} className="space-y-5">
             <Input
               type="text"
-              label="Full Name"
+              label="username"
               placeholder="John Doe"
               value={name}
               onChange={(e) => setName(e.target.value)}
