@@ -4,9 +4,20 @@ import ProductCard from "../components/ProductCard";
 import { CartContext } from "../context/CartContext";
 import { Link } from "react-router-dom";
 import Button from "../components/ui/Button";
+import { products } from "../data/products";
 
 const Wishlist = () => {
   const { wishlist } = useContext(CartContext);
+
+  // Resolve ID array to full product objects (backward compatible with objects)
+  const wishlistProducts = wishlist
+    .map((item) => {
+      if (item && typeof item === "object") {
+        return item;
+      }
+      return products.find((p) => p.id === item);
+    })
+    .filter((p) => p !== undefined);
 
   return (
     <>
@@ -18,11 +29,11 @@ const Wishlist = () => {
             My Wishlist
           </h1>
           <span className="bg-purple-100 dark:bg-purple-900/50 text-purple-700 dark:text-purple-300 text-xs font-extrabold px-3 py-1 rounded-full">
-            {wishlist.length} Items
+            {wishlistProducts.length} Items
           </span>
         </div>
 
-        {wishlist.length === 0 ? (
+        {wishlistProducts.length === 0 ? (
           <div className="text-center py-20 bg-white dark:bg-slate-800/40 border border-slate-100 dark:border-slate-800/60 rounded-3xl p-8 shadow-sm max-w-xl mx-auto">
             <svg className="w-16 h-16 text-slate-300 dark:text-slate-600 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
@@ -35,7 +46,7 @@ const Wishlist = () => {
           </div>
         ) : (
           <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-8">
-            {wishlist.map((item) => (
+            {wishlistProducts.map((item) => (
               <ProductCard key={item.id} product={item} />
             ))}
           </div>

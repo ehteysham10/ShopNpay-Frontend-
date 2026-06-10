@@ -4,6 +4,16 @@ import { toast } from "react-toastify";
 export const CartContext = createContext();
 
 const CartProvider = ({ children }) => {
+  // Authentication state
+  const [user, setUser] = useState(() => {
+    const saved = localStorage.getItem("user");
+    return saved ? JSON.parse(saved) : null;
+  });
+
+  const [token, setToken] = useState(() => {
+    return localStorage.getItem("token") || null;
+  });
+
   // Core cart state
   const [cart, setCart] = useState(() => {
     const saved = localStorage.getItem("cart");
@@ -101,12 +111,16 @@ const CartProvider = ({ children }) => {
 
   // Wishlist actions
   const toggleWishlist = (productId) => {
-    setWishlist((prev) =>
-      prev.includes(productId)
-        ? prev.filter((id) => id !== productId)
-        : [...prev, productId]
-    );
-    toast.info(prev => prev.includes(productId) ? "Removed from Wishlist" : "Added to Wishlist");
+    setWishlist((prev) => {
+      const isAdded = prev.includes(productId);
+      if (isAdded) {
+        toast.info("Removed from Wishlist");
+        return prev.filter((id) => id !== productId);
+      } else {
+        toast.success("Added to Wishlist");
+        return [...prev, productId];
+      }
+    });
   };
 
   // Theme toggle
@@ -161,6 +175,45 @@ const CartProvider = ({ children }) => {
     return newOrder;
   };
 
+  // Google OAuth Auth Actions
+  const loginGoogle = async (credential) => {
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/v1/auth/google`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ credential })
+      });
+
+      const result = await response.json();
+
+      if (response.ok && result.status === "success") {
+        const { token, user } = result.data;
+        setToken(token);
+        setUser(user);
+        localStorage.setItem("token", token);
+        localStorage.setItem("user", JSON.stringify(user));
+        toast.success(`Welcome back, ${user.name}!`);
+        return { success: true, user };
+      } else {
+        throw new Error(result.message || "Google authentication failed");
+      }
+    } catch (error) {
+      console.error("Google login error:", error);
+      toast.error(error.message || "Failed to authenticate with Google");
+      return { success: false, error: error.message };
+    }
+  };
+
+  const logout = () => {
+    setToken(null);
+    setUser(null);
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    toast.info("Logged out successfully");
+  };
+
   const totalPrice = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
   const discountAmount = appliedCoupon ? totalPrice * appliedCoupon.discount : 0;
   const finalPrice = totalPrice - discountAmount;
@@ -187,6 +240,10 @@ const CartProvider = ({ children }) => {
         removeCoupon,
         orders,
         placeOrder,
+        user,
+        token,
+        loginGoogle,
+        logout,
       }}
     >
       {children}

@@ -225,6 +225,23 @@ const Admin = () => {
     { id: "#03914", name: "iPhone 15 Pro Max", category: "Phone", stock: 0 },
   ]);
 
+  // User management registry list
+  const [usersList, setUsersList] = useState([
+    { id: "USR-001", name: "Zain Ahmed", email: "zain.ahmed@example.com", role: "user" },
+    { id: "USR-002", name: "Sara Khan", email: "sara.khan@example.com", role: "user" },
+    { id: "USR-003", name: "Bilal Malik", email: "bilal.malik@example.com", role: "admin" },
+    { id: "USR-004", name: "Ayesha Omer", email: "ayesha.omer@example.com", role: "user" }
+  ]);
+
+  const [selectedUser, setSelectedUser] = useState(null);
+
+  const deleteUser = (userId) => {
+    setUsersList(prev => prev.filter(user => user.id !== userId));
+    if (selectedUser && selectedUser.id === userId) {
+      setSelectedUser(null);
+    }
+  };
+
   // Handle Order Workflow Lifecycle Transitions
   const proceedOrder = (orderId, currentStatus) => {
     setOrders((prevOrders) =>
@@ -567,6 +584,118 @@ const Admin = () => {
             </table>
           </div>
         </div>
+
+        {/* USER MANAGEMENT REGISTRY SECTION */}
+        <div className="bg-[#111c40] border border-slate-800/60 rounded-2xl p-6 shadow-md">
+          <div className="flex justify-between items-center mb-6">
+            <div>
+              <h3 className="text-base font-bold text-slate-200">User Management Registry</h3>
+              <p className="text-xs text-slate-400 mt-0.5">View and moderate active user accounts registered in the database</p>
+            </div>
+            <span className="text-xs text-blue-400 font-bold">Total Accounts: {usersList.length}</span>
+          </div>
+
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-sm text-slate-300 whitespace-nowrap">
+              <thead className="text-xs uppercase text-slate-400 bg-[#0b1329] border border-slate-800">
+                <tr>
+                  <th className="px-4 py-3">User ID</th>
+                  <th className="px-4 py-3">Email Address</th>
+                  <th className="px-4 py-3">Role</th>
+                  <th className="px-4 py-3 text-center">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-800">
+                {usersList.length > 0 ? (
+                  usersList.map((usr) => (
+                    <tr key={usr.id} className="hover:bg-slate-800/20 transition-colors">
+                      <td className="px-4 py-3.5 text-slate-500 font-mono text-xs">{usr.id}</td>
+                      <td className="px-4 py-3.5 font-bold text-slate-200">{usr.email}</td>
+                      <td className="px-4 py-3.5">
+                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${
+                          usr.role === "admin"
+                            ? "bg-purple-500/10 text-purple-400 border-purple-500/20"
+                            : "bg-blue-500/10 text-blue-400 border-blue-500/20"
+                        }`}>
+                          {usr.role.toUpperCase()}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3.5 text-center flex justify-center gap-2">
+                        <button
+                          onClick={() => setSelectedUser(usr)}
+                          className="text-xs bg-blue-600 hover:bg-blue-500 text-white px-3 py-1.5 rounded-lg transition-colors font-medium cursor-pointer shadow-sm"
+                        >
+                          View
+                        </button>
+                        <button
+                          onClick={() => deleteUser(usr.id)}
+                          className="text-xs bg-red-950/20 border border-red-900/50 hover:bg-red-600 hover:text-white text-red-400 px-3 py-1.5 rounded-lg transition-colors font-medium cursor-pointer"
+                        >
+                          Delete
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="4" className="text-center py-8 text-slate-500 text-xs font-medium bg-[#0b1329]/30">
+                      No users registered in the system.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* USER DETAILS MODAL (Viewer) */}
+        {selectedUser && (
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fade-in">
+            <div className="bg-[#111c40] border border-slate-805 rounded-3xl p-6 max-w-sm w-full text-white shadow-2xl relative">
+              <button
+                onClick={() => setSelectedUser(null)}
+                className="absolute top-4 right-4 text-slate-400 hover:text-white cursor-pointer"
+              >
+                ✕
+              </button>
+              <h3 className="text-lg font-black text-blue-400 border-b border-slate-800 pb-3 mb-4">
+                User Details Card
+              </h3>
+              <div className="space-y-4 text-left">
+                <div>
+                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">User ID</label>
+                  <p className="font-mono text-sm text-slate-300 mt-0.5">{selectedUser.id}</p>
+                </div>
+                <div>
+                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Full Name</label>
+                  <p className="text-base font-bold text-slate-100 mt-0.5">{selectedUser.name}</p>
+                </div>
+                <div>
+                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Email Address</label>
+                  <p className="text-sm font-semibold text-slate-100 mt-0.5">{selectedUser.email}</p>
+                </div>
+                <div>
+                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Account Role</label>
+                  <div className="mt-1">
+                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${
+                      selectedUser.role === "admin"
+                        ? "bg-purple-500/10 text-purple-400 border-purple-500/20"
+                        : "bg-blue-500/10 text-blue-400 border-blue-500/20"
+                    }`}>
+                      {selectedUser.role.toUpperCase()}
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <button
+                onClick={() => setSelectedUser(null)}
+                className="w-full bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold py-2 px-4 rounded-xl border border-slate-700/60 mt-6 transition-colors cursor-pointer"
+              >
+                Close View
+              </button>
+            </div>
+          </div>
+        )}
 
       </main>
     </div>

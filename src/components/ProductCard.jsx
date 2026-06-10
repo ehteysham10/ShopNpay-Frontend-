@@ -7,7 +7,7 @@ import Button from "./ui/Button";
 const ProductCard = ({ product }) => {
   const { addToCart, wishlist, toggleWishlist, isCartOpen, toggleCart } = useContext(CartContext);
 
-  const isFavorited = wishlist.some((item) => item.id === product.id);
+  const isFavorited = wishlist.includes(product.id);
 
   const handleAddToCart = () => {
     addToCart(product);
@@ -21,7 +21,7 @@ const ProductCard = ({ product }) => {
 
       {/* WISHLIST FLOATING HEART */}
       <button
-        onClick={() => toggleWishlist(product)}
+        onClick={() => toggleWishlist(product.id)}
         className="absolute top-2 right-2 sm:top-3 sm:right-3 z-10 p-1.5 sm:p-2 rounded-lg sm:rounded-xl bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm shadow-sm text-slate-400 hover:text-red-500 hover:scale-110 active:scale-95 transition-all cursor-pointer"
         aria-label="Add to Wishlist"
       >

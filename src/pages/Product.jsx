@@ -34,7 +34,7 @@ const Product = () => {
     );
   }
 
-  const isFavorited = wishlist.some((item) => item.id === product.id);
+  const isFavorited = wishlist.includes(product.id);
 
   const handleAddToCart = () => {
     addToCart(product);
@@ -131,7 +131,7 @@ const Product = () => {
 
               {/* WISHLIST BUTTON */}
               <Button
-                onClick={() => toggleWishlist(product)}
+                onClick={() => toggleWishlist(product.id)}
                 variant={isFavorited ? "secondary" : "outline"}
                 size="lg"
                 className="px-6"

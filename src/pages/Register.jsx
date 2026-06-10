@@ -92,22 +92,24 @@
 
 
 
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useState, useEffect, useContext } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Input from "../components/ui/Input";
 import Button from "../components/ui/Button";
+import { CartContext } from "../context/CartContext";
 
 const Register = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState(""); // Added state
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const { loginGoogle } = useContext(CartContext);
+  const navigate = useNavigate();
 
   const handleRegister = (e) => {
     e.preventDefault();
 
-    // Validation: Check if passwords match
     if (password !== confirmPassword) {
       alert("Passwords do not match!");
       return;
@@ -115,6 +117,44 @@ const Register = () => {
 
     alert(`Registered ${name}`);
   };
+
+  useEffect(() => {
+    const initializeGoogleSignUp = () => {
+      if (window.google) {
+        window.google.accounts.id.initialize({
+          client_id: "533027319161-lio6ph1334up5u96u1cahnrvpntgehc3.apps.googleusercontent.com",
+          callback: async (response) => {
+            const res = await loginGoogle(response.credential);
+            if (res && res.success) {
+              navigate("/");
+            }
+          }
+        });
+        window.google.accounts.id.renderButton(
+          document.getElementById("google-signup-btn"),
+          { 
+            theme: "outline", 
+            size: "large", 
+            width: "384", 
+            text: "continue_with",
+            shape: "rectangular"
+          }
+        );
+      }
+    };
+
+    if (window.google) {
+      initializeGoogleSignUp();
+    } else {
+      const interval = setInterval(() => {
+        if (window.google) {
+          initializeGoogleSignUp();
+          clearInterval(interval);
+        }
+      }, 100);
+      return () => clearInterval(interval);
+    }
+  }, [loginGoogle, navigate]);
 
   return (
     <div className="min-h-screen flex flex-col bg-[#0b1329]">
@@ -168,7 +208,6 @@ const Register = () => {
               />
             </div>
 
-            {/* Added Confirm Password Input Field */}
             <div className="flex flex-col text-left [&_input]:bg-slate-50 [&_input]:text-slate-900 [&_input]:border-slate-200 [&_input]:placeholder-slate-400">
               <Input
                 type="password"
@@ -190,6 +229,19 @@ const Register = () => {
               </Button>
             </div>
           </form>
+
+          <div className="relative my-6">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-slate-200"></div>
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-white px-2 text-slate-400 font-semibold">Or continue with</span>
+            </div>
+          </div>
+
+          <div className="flex justify-center">
+            <div id="google-signup-btn" className="w-full flex justify-center"></div>
+          </div>
         </div>
       </div>
     </div>
