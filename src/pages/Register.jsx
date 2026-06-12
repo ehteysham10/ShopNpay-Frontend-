@@ -104,10 +104,11 @@ const Register = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const { loginGoogle } = useContext(CartContext);
+  const [loading, setLoading] = useState(false);
+  const { register, loginGoogle } = useContext(CartContext);
   const navigate = useNavigate();
 
-  const handleRegister = (e) => {
+  const handleRegister = async (e) => {
     e.preventDefault();
 
     if (password !== confirmPassword) {
@@ -115,7 +116,12 @@ const Register = () => {
       return;
     }
 
-    alert(`Registered ${name}`);
+    setLoading(true);
+    const res = await register(name, email, password, confirmPassword);
+    setLoading(false);
+    if (res && res.success) {
+      navigate("/login");
+    }
   };
 
   useEffect(() => {
@@ -224,8 +230,9 @@ const Register = () => {
                 type="submit"
                 variant="primary"
                 className="w-full py-3 text-sm tracking-wider uppercase font-bold bg-purple-600 hover:bg-purple-700 text-white shadow-md rounded-xl transition-colors"
+                disabled={loading}
               >
-                Register
+                {loading ? "Registering..." : "Register"}
               </Button>
             </div>
           </form>

@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Input from "../components/ui/Input";
 import Button from "../components/ui/Button";
+import { CartContext } from "../context/CartContext";
 
 const ResetPassword = () => {
   const { token } = useParams();
@@ -12,6 +13,7 @@ const ResetPassword = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const { resetPassword } = useContext(CartContext);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -28,13 +30,12 @@ const ResetPassword = () => {
     }
 
     setLoading(true);
-    // Simulate API call – replace with real backend endpoint later
-    // e.g. POST /api/v1/auth/reset-password/:token { password }
-    await new Promise((r) => setTimeout(r, 1500));
+    const res = await resetPassword(token, password);
     setLoading(false);
 
-    // Redirect to login after successful reset
-    navigate("/login");
+    if (res && res.success) {
+      navigate("/login");
+    }
   };
 
   return (

@@ -1,21 +1,24 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Input from "../components/ui/Input";
 import Button from "../components/ui/Button";
+import { CartContext } from "../context/CartContext";
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
+  const { forgotPassword } = useContext(CartContext);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    // Simulate API call – replace with real backend endpoint later
-    await new Promise((r) => setTimeout(r, 1200));
+    const res = await forgotPassword(email);
     setLoading(false);
-    setSubmitted(true);
+    if (res && res.success) {
+      setSubmitted(true);
+    }
   };
 
   return (

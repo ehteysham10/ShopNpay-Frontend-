@@ -1,56 +1,50 @@
 import { useContext, useState, useRef, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import { CartContext } from "../context/CartContext";
 import Input from "../components/ui/Input";
 import Button from "../components/ui/Button";
+import { toast } from "react-toastify";
+import { loadStripe } from "@stripe/stripe-js";
+import { Elements, CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
 
-const Checkout = () => {
-  const { cart, totalPrice } = useContext(CartContext);
+const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || "pk_test_51Psz8fF1sN4S88qP3bT");
+const API_URL = import.meta.env.VITE_API_URL || "https://shopnpay-backend.onrender.com/api/v1";
+
+const CheckoutForm = () => {
+  const { cart, totalPrice, discountAmount, finalPrice, token, user, setCart } = useContext(CartContext);
+  const navigate = useNavigate();
+  const stripe = useStripe();
+  const elements = useElements();
 
   const [address, setAddress] = useState("");
   const [city, setCity] = useState("");
   const [phone, setPhone] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
   // Search dropdown states
   const [searchQuery, setSearchQuery] = useState("");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [pakistaniCities, setPakistaniCities] = useState([]);
   const dropdownRef = useRef(null);
 
-  // Extensive list of Pakistani cities and major towns
-  const pakistaniCities = [
-    "Abbottabad", "Abdul Hakeem", "Ahmedpur East", "Alipur", "Arifwala", "Attock", "Baddomalhi", "Badin",
-    "Bagh", "Bahawalnagar", "Bahawalpur", "Bannu", "Barikot", "Batgram", "Bela", "Bhakkar", "Bhalwal",
-    "Bhimber", "Burewala", "Chakwal", "Chaman", "Charsadda", "Chichawatni", "Chiniot", "Chishtian",
-    "Chitral", "Choa Saidan Shah", "Chunian", "Dadu", "Dadyal", "Daharki", "Darya Khan", "Daska",
-    "Dera Ghazi Khan", "Dera Ismail Khan", "Dina", "Dinga", "Dipalpur", "Dokri", "Dunya Pur", "Farooka",
-    "Faisalabad", "Fateh Jang", "Gakhar Mandi", "Gharo", "Ghazni Khel", "Ghotki", "Goandlanwala", "Gojra",
-    "Gujar Khan", "Gujranwala", "Gujrat", "Gwadar", "Hafizabad", "Hala", "Hangu", "Haripur", "Haroonabad",
-    "Hasan Abdal", "Havelian", "Hazro", "Hujra Shah Muqeem", "Hyderabad", "Iskandarabad", "Islamabad",
-    "Jacobabad", "Jahanian", "Jalalpur Jattan", "Jalalpur Pirwala", "Jampur", "Jamshoro", "Jand", "Jaranwala",
-    "Jauharabad", "Jehangira", "Jhang", "Jhelum", "Jhudo", "Kabirwala", "Kahat", "Kahror Pakka", "Kahuta",
-    "Kala Bagh", "Kalam", "Kallor Kot", "Kamalia", "Kamar Mushani", "Kamber Ali Khan", "Kamoke", "Kandhkot",
-    "Kandiaro", "Karachi", "Karak", "Karoor Lal Easan", "Kashmore", "Kasur", "Keti Bandar", "Khairpur",
-    "Khanary", "Khanewal", "Khanpur", "Khanqah Sharif", "Kharian", "Khushab", "Khuzdar", "Kohat", "Kot Addu",
-    "Kot Ghulam Muhammad", "Kot Radha Kishan", "Kotli", "Kotli Sattian", "Kotri", "Kulachi", "Kundian",
-    "Kunjah", "Lahore", "Laki Marwat", "Lalamusa", "Lalian", "Larkana", "Leiah", "Liaquatpur", "Lodhran", "Loralai",
-    "Madyan", "Mailsi", "Makhdoom Pur Pahuran", "Malakwal", "Mamu Kanjan", "Mansehra", "Mardan", "Matiari",
-    "Matli", "Mehar", "Mian Channu", "Mianwali", "Minchinabad", "Mingora", "Mirpur Azad Kashmir",
-    "Mirpur Khas", "Mirpur Mathelo", "Mithani", "Mithi", "Moro", "Multan", "Muridke", "Murree",
-    "Mustafabad", "Muzaffarabad", "Muzaffargarh", "Nankana Sahib", "Narang Mandi", "Narowal", "Nasirabad",
-    "Naudero", "Naushahro Feroze", "Naushahra", "Nawabshah", "Nazimabad", "Nowshera", "Nushki", "Okara",
-    "Ormara", "Pabbi", "Pakpattan", "Panjgur", "Pano Aqil", "Pasni", "Pasrur", "Pattoki", "Peshawar",
-    "Phae", "Phool Nagar", "Pind Dadan Khan", "Pindi Bhattian", "Pindi Gheb", "Pir Jo Goth", "Pir Mahal",
-    "Pishin", "Qila Didar Singh", "Quetta", "Rabwah", "Rahim Yar Khan", "Raiwind", "Rajanpur", "Ranipur",
-    "Rato Dero", "Rawalakot", "Rawalpindi", "Renala Khurd", "Risalpur", "Rohri", "Sadiqabad", "Safdarabad",
-    "Sahiwal", "Saidu Sharif", "Sakrand", "Sambrial", "Samundri", "Sanawan", "Sanghar", "Sangla Hill",
-    "Sanjwal", "Sargodha", "Sehwan Sharif", "Shabqadar", "Shahdadkot", "Shahdadpur", "Shahkot", "Shahpur",
-    "Shakargarh", "Sharaqpur", "Sheikhupura", "Shikarpur", "Shorkot", "Shujaabad", "Sialkot", "Sibi",
-    "Sillanwali", "Sita Road", "Sukkur", "Swabi", "Swat", "Taftan", "Tala Gang", "Talamba", "Tando Adam",
-    "Tando Allahyar", "Tando Muhammad Khan", "Tangi", "Tank", "Taunsa Sharif", "Taxila", "Thalo",
-    "Thanil Kamal", "Thari Mirwah", "Tharparkar", "Thatta", "Thul", "Toba Tek Singh", "Topi", "Turbat",
-    "Ubauro", "Uch Sharif", "Umarkot", "Upper Dir", "Usta Muhammad", "Vihari", "Vehari", "Wadh", "Wah Cantonment",
-    "Warah", "Wazirabad", "Yazman", "Zafarwal", "Zahir Pir", "Ziarat"
-  ].sort();
+  useEffect(() => {
+    const fetchCities = async () => {
+      try {
+        const response = await fetch(`${API_URL}/orders/cities`);
+        const result = await response.json();
+        if (response.ok && result.status === "success") {
+          setPakistaniCities(result.data || []);
+        } else {
+          setPakistaniCities(["Karachi", "Lahore", "Islamabad", "Rawalpindi", "Faisalabad", "Multan", "Peshawar", "Quetta", "Sialkot", "Gujranwala"]);
+        }
+      } catch (err) {
+        console.error("Error fetching cities:", err);
+        setPakistaniCities(["Karachi", "Lahore", "Islamabad", "Rawalpindi", "Faisalabad", "Multan", "Peshawar", "Quetta", "Sialkot", "Gujranwala"]);
+      }
+    };
+    fetchCities();
+  }, []);
 
   const filteredCities = pakistaniCities.filter((cityName) =>
     cityName.toLowerCase().includes(searchQuery.toLowerCase())
@@ -66,24 +60,106 @@ const Checkout = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const handleOrder = (e) => {
+  const handleOrder = async (e) => {
     e.preventDefault();
-    if (!city) {
-      alert("Please select a city from the list.");
+    if (!token) {
+      toast.error("Please log in to complete checkout.");
       return;
     }
-    alert(`Order Placed!\nTotal: $${totalPrice}\nAddress: ${address}, ${city}\nPhone: ${phone}`);
+    if (!city) {
+      toast.error("Please select a city from the list.");
+      return;
+    }
+    if (!stripe || !elements) {
+      return;
+    }
+
+    setSubmitting(true);
+    try {
+      // 1. Create Payment Intent
+      const response = await fetch(`${API_URL}/orders/create-payment-intent`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          shippingAddress: {
+            address,
+            city,
+            phone
+          }
+        })
+      });
+      const result = await response.json();
+      if (!response.ok || result.status !== "success") {
+        toast.error(result.message || "Failed to initialize payment.");
+        setSubmitting(false);
+        return;
+      }
+
+      const { clientSecret, paymentIntentId } = result.data;
+
+      // 2. Confirm Card Payment via Stripe
+      const cardElement = elements.getElement(CardElement);
+      const confirmResult = await stripe.confirmCardPayment(clientSecret, {
+        payment_method: {
+          card: cardElement,
+          billing_details: {
+            name: user?.name || "Customer",
+            phone: phone
+          }
+        }
+      });
+
+      if (confirmResult.error) {
+        toast.error(confirmResult.error.message || "Payment failed");
+        setSubmitting(false);
+        return;
+      }
+
+      // 3. Confirm Order on Backend
+      if (confirmResult.paymentIntent.status === "succeeded") {
+        const confirmResponse = await fetch(`${API_URL}/orders/confirm`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            paymentIntentId,
+            shippingAddress: {
+              address,
+              city,
+              phone
+            }
+          })
+        });
+        const confirmResultData = await confirmResponse.json();
+        if (confirmResponse.ok && confirmResultData.status === "success") {
+          toast.success("Order placed successfully!");
+          setCart([]);
+          navigate("/");
+        } else {
+          toast.error(confirmResultData.message || "Order verification failed.");
+        }
+      }
+    } catch (error) {
+      console.error("Checkout error:", error);
+      toast.error("An error occurred during checkout.");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const shipping = cart.length > 0 ? 15 : 0;
-  const grandTotal = totalPrice + shipping;
+  const grandTotal = finalPrice + shipping;
 
   return (
     <div className="min-h-screen bg-[#0b1329]">
       <Navbar />
 
       <div className="max-w-7xl mx-auto p-6 py-12">
-        {/* FIXED: Heading color is now bright white to look clear over the deep navy background */}
         <h1 className="text-3xl font-black text-white tracking-tight mb-8 text-left">
           Checkout
         </h1>
@@ -96,8 +172,6 @@ const Checkout = () => {
             </h2>
 
             <form onSubmit={handleOrder} className="space-y-5">
-
-              {/* FIXED: Embedded styles to clean up field values rendering over light background sheets */}
               <div className="flex flex-col text-left [&_input]:bg-slate-50 [&_input]:text-slate-900 [&_input]:border-slate-200 [&_input]:placeholder-slate-400">
                 <Input
                   type="text"
@@ -106,11 +180,11 @@ const Checkout = () => {
                   value={address}
                   onChange={(e) => setAddress(e.target.value)}
                   required
+                  disabled={submitting}
                 />
               </div>
 
               <div className="grid sm:grid-cols-2 gap-5 items-end">
-
                 {/* SEARCHABLE CITY SELECTION CONTAINER */}
                 <div className="flex flex-col items-start w-full relative text-left" ref={dropdownRef}>
                   <label className="text-xs font-bold text-slate-400 mb-2 uppercase tracking-wider">
@@ -124,12 +198,12 @@ const Checkout = () => {
                     className="absolute opacity-0 pointer-events-none bottom-0 left-0 w-full h-1"
                     required
                     onChange={() => { }}
+                    disabled={submitting}
                   />
 
-                  {/* FIXED: Darkened border and structured bg for pristine readability inside the white card */}
                   <div
-                    onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                    className="w-full border-2 border-slate-300 focus-within:border-purple-600 rounded-xl px-4 py-3 text-sm bg-slate-50 text-slate-900 flex justify-between items-center cursor-pointer h-[46px] shadow-sm hover:bg-slate-100/70 transition-all"
+                    onClick={() => !submitting && setIsDropdownOpen(!isDropdownOpen)}
+                    className={`w-full border-2 border-slate-300 focus-within:border-purple-600 rounded-xl px-4 py-3 text-sm bg-slate-50 text-slate-900 flex justify-between items-center cursor-pointer h-[46px] shadow-sm hover:bg-slate-100/70 transition-all ${submitting ? "opacity-60 cursor-not-allowed" : ""}`}
                   >
                     <span className={city ? "text-slate-900 font-bold" : "text-slate-400 font-medium"}>
                       {city || "Search or choose city"}
@@ -139,11 +213,9 @@ const Checkout = () => {
                     </svg>
                   </div>
 
-                  {/* SEARCH RESULTS DROPDOWN FLUID POP-OVER */}
                   {isDropdownOpen && (
                     <div className="absolute top-[76px] left-0 w-full bg-white border border-slate-300 rounded-xl shadow-2xl z-50 overflow-hidden border-t-2">
                       <div className="p-2 border-b border-slate-200 bg-slate-100">
-                        {/* FIXED: Explicitly dark layout for search input box */}
                         <input
                           type="text"
                           placeholder="Type city name to search..."
@@ -165,8 +237,7 @@ const Checkout = () => {
                                 setSearchQuery("");
                                 setIsDropdownOpen(false);
                               }}
-                              className={`px-4 py-2.5 hover:bg-purple-600 hover:text-white cursor-pointer transition-colors ${city === cityName ? "bg-purple-100 text-purple-900" : ""
-                                }`}
+                              className={`px-4 py-2.5 hover:bg-purple-600 hover:text-white cursor-pointer transition-colors ${city === cityName ? "bg-purple-100 text-purple-900" : ""}`}
                             >
                               {cityName}
                             </li>
@@ -181,7 +252,7 @@ const Checkout = () => {
                   )}
                 </div>
 
-                {/* PHONE NUMBER VALUE TEXT BOX */}
+                {/* PHONE NUMBER */}
                 <div className="flex flex-col text-left w-full [&_input]:bg-slate-50 [&_input]:text-slate-900 [&_input]:border-slate-200 [&_input]:placeholder-slate-400">
                   <Input
                     type="text"
@@ -190,6 +261,33 @@ const Checkout = () => {
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
                     required
+                    disabled={submitting}
+                  />
+                </div>
+              </div>
+
+              {/* CARD DETAILS ELEMENT */}
+              <div className="flex flex-col text-left w-full mt-6">
+                <label className="text-xs font-bold text-slate-400 mb-2 uppercase tracking-wider">
+                  Card Details
+                </label>
+                <div className="w-full border-2 border-slate-300 rounded-xl px-4 py-3 bg-slate-50 shadow-sm focus-within:border-purple-600 transition-all">
+                  <CardElement
+                    options={{
+                      style: {
+                        base: {
+                          fontSize: "14px",
+                          color: "#0f172a",
+                          fontFamily: "Inter, sans-serif",
+                          "::placeholder": {
+                            color: "#94a3b8",
+                          },
+                        },
+                        invalid: {
+                          color: "#ef4444",
+                        },
+                      },
+                    }}
                   />
                 </div>
               </div>
@@ -199,8 +297,9 @@ const Checkout = () => {
                   type="submit"
                   variant="primary"
                   className="w-full py-3 text-sm tracking-wider uppercase font-bold bg-purple-600 hover:bg-purple-700 text-white shadow-md rounded-xl transition-colors"
+                  disabled={submitting || cart.length === 0}
                 >
-                  Place Order
+                  {submitting ? "Processing Payment..." : "Pay and Place Order"}
                 </Button>
               </div>
             </form>
@@ -238,6 +337,12 @@ const Checkout = () => {
                     <span>Subtotal</span>
                     <span className="text-slate-800">${totalPrice}</span>
                   </div>
+                  {discountAmount > 0 && (
+                    <div className="flex justify-between text-green-600 font-bold">
+                      <span>Discount</span>
+                      <span>-${discountAmount.toFixed(2)}</span>
+                    </div>
+                  )}
                   <div className="flex justify-between">
                     <span>Shipping</span>
                     <span className="text-slate-800">${shipping}</span>
@@ -258,6 +363,14 @@ const Checkout = () => {
         </div>
       </div>
     </div>
+  );
+};
+
+const Checkout = () => {
+  return (
+    <Elements stripe={stripePromise}>
+      <CheckoutForm />
+    </Elements>
   );
 };
 

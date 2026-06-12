@@ -1,30 +1,73 @@
 
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
 import ProductCard from "../components/ProductCard";
 import Input from "../components/ui/Input";
-import { products } from "../data/products";
+
+const API_URL = import.meta.env.VITE_API_URL || "https://shopnpay-backend.onrender.com/api/v1";
 
 const Home = () => {
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("All");
   const [sortBy, setSortBy] = useState("Featured");
-
-  // Dynamically calculate max price from the product catalogue
-  const maxProductPrice = Math.max(...products.map((p) => p.price));
-  const [priceRange, setPriceRange] = useState(maxProductPrice);
+  const [productsList, setProductsList] = useState([]);
+  const [priceRange, setPriceRange] = useState(1000);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   const categories = ["All", "Shoes", "Watch", "Phone", "Headphones", "Laptops", "Cameras", "Gaming", "Accessories"];
 
-  // Filter products by category, search text, and price range
-  const filtered = products.filter((p) => {
-    return (
-      (category === "All" || p.category === category) &&
-      p.name.toLowerCase().includes(search.toLowerCase()) &&
-      p.price <= priceRange
-    );
-  });
+  useEffect(() => {
+    const fetchProducts = async () => {
+      setLoading(true);
+      setError("");
+      try {
+        let url = `${API_URL}/products?limit=100`;
+        if (category !== "All") {
+          url += `&category=${category.toLowerCase()}`;
+        }
+        if (search) {
+          url += `&search=${search}`;
+        }
+        const response = await fetch(url);
+        const result = await response.json();
+        if (response.ok && result.status === "success") {
+          const normalized = (result.data.products || []).map(p => ({
+            id: p.productId,
+            productId: p.productId,
+            _id: p._id,
+            name: p.title,
+            title: p.title,
+            price: p.price,
+            category: p.category ? p.category.charAt(0).toUpperCase() + p.category.slice(1) : "",
+            image: p.images?.[0]?.url || "",
+            images: p.images || [],
+            description: p.description,
+            rating: p.rating || 4.5,
+            reviewsCount: p.reviewsCount || 0
+          }));
+          setProductsList(normalized);
+          
+          if (normalized.length > 0) {
+            setPriceRange(Math.max(...normalized.map(p => p.price)));
+          }
+        } else {
+          setError(result.message || "Failed to load products");
+        }
+      } catch (err) {
+        console.error("Error loading products:", err);
+        setError("Failed to connect to server");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, [category, search]);
+
+  // Filter products by price range
+  const filtered = productsList.filter((p) => p.price <= priceRange);
 
   // Sort products dynamically
   const sorted = [...filtered].sort((a, b) => {
@@ -130,7 +173,16 @@ const Home = () => {
         </div>
 
         {/* PRODUCTS GRID */}
-        {sorted.length > 0 ? (
+        {loading ? (
+          <div className="flex flex-col items-center justify-center py-20 w-full col-span-full">
+            <div className="w-12 h-12 border-4 border-purple-500 border-t-transparent rounded-full animate-spin"></div>
+            <p className="text-slate-400 dark:text-slate-500 mt-4 font-bold text-sm">Loading products...</p>
+          </div>
+        ) : error ? (
+          <div className="text-center py-20 bg-white dark:bg-slate-800/20 border border-slate-100 dark:border-slate-800 rounded-3xl p-8 max-w-xl mx-auto shadow-sm w-full col-span-full">
+            <p className="text-red-500 font-bold">{error}</p>
+          </div>
+        ) : sorted.length > 0 ? (
           <div className="grid grid-cols-2 md:grid-cols-3 gap-2.5 sm:gap-6 md:gap-8 w-full">
             {sorted.map((p) => (
               <ProductCard key={p.id} product={p} />

@@ -8,12 +8,22 @@ import { CartContext } from "../context/CartContext";
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { loginGoogle } = useContext(CartContext);
+  const [loading, setLoading] = useState(false);
+  const { login, loginGoogle } = useContext(CartContext);
   const navigate = useNavigate();
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    alert(`Logged in with ${email}`);
+    setLoading(true);
+    const res = await login(email, password);
+    setLoading(false);
+    if (res && res.success) {
+      if (res.user.role === "admin") {
+        navigate("/admin");
+      } else {
+        navigate("/");
+      }
+    }
   };
 
   useEffect(() => {
@@ -106,8 +116,9 @@ const Login = () => {
                 type="submit"
                 variant="primary"
                 className="w-full py-3 text-sm tracking-wider uppercase font-bold"
+                disabled={loading}
               >
-                Login
+                {loading ? "Logging in..." : "Login"}
               </Button>
             </div>
           </form>
