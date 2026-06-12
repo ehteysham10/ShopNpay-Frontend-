@@ -84,11 +84,9 @@ const CheckoutForm = () => {
           Authorization: `Bearer ${token}`
         },
         body: JSON.stringify({
-          shippingAddress: {
-            address,
-            city,
-            phone
-          }
+          fullAddress: address,
+          city,
+          phone
         })
       });
       const result = await response.json();
@@ -128,11 +126,9 @@ const CheckoutForm = () => {
           },
           body: JSON.stringify({
             paymentIntentId,
-            shippingAddress: {
-              address,
-              city,
-              phone
-            }
+            fullAddress: address,
+            city,
+            phone
           })
         });
         const confirmResultData = await confirmResponse.json();
