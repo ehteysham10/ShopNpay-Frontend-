@@ -45,43 +45,76 @@ const normalizeWishlist = (backendWishlist) => {
 const CartProvider = ({ children }) => {
   // Authentication state
   const [user, setUser] = useState(() => {
-    const saved = localStorage.getItem("user");
-    return saved ? JSON.parse(saved) : null;
+    try {
+      const saved = localStorage.getItem("user");
+      return saved && saved !== "undefined" ? JSON.parse(saved) : null;
+    } catch (e) {
+      console.error("Error parsing user from localStorage:", e);
+      return null;
+    }
   });
 
   const [token, setToken] = useState(() => {
-    return localStorage.getItem("token") || null;
+    try {
+      return localStorage.getItem("token") || null;
+    } catch {
+      return null;
+    }
   });
 
   // Core cart state
   const [cart, setCart] = useState(() => {
-    const saved = localStorage.getItem("cart");
-    return saved ? JSON.parse(saved) : [];
+    try {
+      const saved = localStorage.getItem("cart");
+      return saved && saved !== "undefined" ? JSON.parse(saved) : [];
+    } catch (e) {
+      console.error("Error parsing cart from localStorage:", e);
+      return [];
+    }
   });
 
   // Wishlist state (array of product objects when logged in, ids when guest)
   const [wishlist, setWishlist] = useState(() => {
-    const saved = localStorage.getItem("wishlist");
-    return saved ? JSON.parse(saved) : [];
+    try {
+      const saved = localStorage.getItem("wishlist");
+      return saved && saved !== "undefined" ? JSON.parse(saved) : [];
+    } catch (e) {
+      console.error("Error parsing wishlist from localStorage:", e);
+      return [];
+    }
   });
 
   // Orders array
   const [orders, setOrders] = useState(() => {
-    const saved = localStorage.getItem("orders");
-    return saved ? JSON.parse(saved) : [];
+    try {
+      const saved = localStorage.getItem("orders");
+      return saved && saved !== "undefined" ? JSON.parse(saved) : [];
+    } catch (e) {
+      console.error("Error parsing orders from localStorage:", e);
+      return [];
+    }
   });
 
   // UI flags
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [theme, setTheme] = useState(() => {
-    const saved = localStorage.getItem("theme");
-    return saved ? saved : "dark";
+    try {
+      const saved = localStorage.getItem("theme");
+      return saved ? saved : "dark";
+    } catch {
+      return "dark";
+    }
   });
 
   // Coupon handling
   const [appliedCoupon, setAppliedCoupon] = useState(() => {
-    const saved = localStorage.getItem("appliedCoupon");
-    return saved ? JSON.parse(saved) : null;
+    try {
+      const saved = localStorage.getItem("appliedCoupon");
+      return saved && saved !== "undefined" ? JSON.parse(saved) : null;
+    } catch (e) {
+      console.error("Error parsing appliedCoupon from localStorage:", e);
+      return null;
+    }
   });
 
   // Persist guest states/theme to localStorage
@@ -151,9 +184,17 @@ const CartProvider = ({ children }) => {
       fetchCartAndWishlist();
     } else {
       const savedCart = localStorage.getItem("cart");
-      setCart(savedCart ? JSON.parse(savedCart) : []);
+      try {
+        setCart(savedCart && savedCart !== "undefined" ? JSON.parse(savedCart) : []);
+      } catch {
+        setCart([]);
+      }
       const savedWishlist = localStorage.getItem("wishlist");
-      setWishlist(savedWishlist ? JSON.parse(savedWishlist) : []);
+      try {
+        setWishlist(savedWishlist && savedWishlist !== "undefined" ? JSON.parse(savedWishlist) : []);
+      } catch {
+        setWishlist([]);
+      }
     }
   }, [token]);
 
