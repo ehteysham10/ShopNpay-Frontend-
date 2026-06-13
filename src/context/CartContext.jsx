@@ -3,7 +3,7 @@ import { toast } from "react-toastify";
 
 export const CartContext = createContext();
 
-const API_URL = import.meta.env.VITE_API_URL || "https://shopnpay-backend.onrender.com/api/v1";
+const API_URL = import.meta.env.VITE_API_URL;
 
 // Helper to normalize product schema
 const normalizeProduct = (backendProduct) => ({

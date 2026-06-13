@@ -110,6 +110,12 @@ const Navbar = () => {
               Checkout
             </Link>
 
+            {user && (
+              <Link to="/orders" className="hover:text-white transition-colors">
+                My Orders
+              </Link>
+            )}
+
             {user ? (
               <div className="relative">
                 <button
@@ -139,6 +145,13 @@ const Navbar = () => {
                       <p className="text-xs text-slate-400 font-medium">Signed in as</p>
                       <p className="text-sm font-bold text-white truncate">{user.email}</p>
                     </div>
+                    <Link
+                      to="/orders"
+                      onClick={() => setShowUserDropdown(false)}
+                      className="block px-4 py-2 text-sm text-slate-300 hover:bg-slate-800 transition-colors"
+                    >
+                      My Orders
+                    </Link>
                     {user.role === "admin" && (
                       <Link
                         to="/admin"
@@ -223,6 +236,16 @@ const Navbar = () => {
           >
             Checkout
           </Link>
+
+          {user && (
+            <Link
+              to="/orders"
+              onClick={() => setIsOpen(false)}
+              className="block hover:text-white py-1 border-b border-slate-800"
+            >
+              My Orders
+            </Link>
+          )}
 
           {user ? (
             <div className="pt-2 border-t border-slate-800 mt-2 space-y-2">

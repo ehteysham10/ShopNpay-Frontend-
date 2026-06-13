@@ -1,11 +1,11 @@
 
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import Navbar from "../components/Navbar";
 import ProductCard from "../components/ProductCard";
 import Input from "../components/ui/Input";
 
-const API_URL = import.meta.env.VITE_API_URL || "https://shopnpay-backend.onrender.com/api/v1";
+const API_URL = import.meta.env.VITE_API_URL;
 
 const Home = () => {
   const [search, setSearch] = useState("");
@@ -17,6 +17,12 @@ const Home = () => {
   const [error, setError] = useState("");
 
   const categories = ["All", "Shoes", "Watch", "Phone", "Headphones", "Laptops", "Cameras", "Gaming", "Accessories"];
+
+  const maxProductPrice = useMemo(() => {
+    return productsList.length > 0
+      ? Math.max(...productsList.map((p) => p.price))
+      : 1000;
+  }, [productsList]);
 
   useEffect(() => {
     const fetchProducts = async () => {

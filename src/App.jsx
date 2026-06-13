@@ -12,6 +12,7 @@ import Admin from "./pages/Admin";
 import Wishlist from "./pages/Wishlist";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
+import Orders from "./pages/Orders";
 import CartDrawer from "./components/CartDrawer";
 import ScrollToTop from "./components/ScrollToTop";
 
@@ -32,6 +33,7 @@ function App() {
         <Route path="/wishlist" element={<Wishlist />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password/:token" element={<ResetPassword />} />
+        <Route path="/orders" element={<Orders />} />
       </Routes>
       
       {/* Global Slide-out Cart Drawer */}

@@ -1,5 +1,5 @@
 import { useContext, useState, useRef, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import { CartContext } from "../context/CartContext";
 import Input from "../components/ui/Input";
@@ -9,7 +9,7 @@ import { loadStripe } from "@stripe/stripe-js";
 import { Elements, CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || "pk_test_51Psz8fF1sN4S88qP3bT");
-const API_URL = import.meta.env.VITE_API_URL || "https://shopnpay-backend.onrender.com/api/v1";
+const API_URL = import.meta.env.VITE_API_URL;
 
 const CheckoutForm = () => {
   const { cart, totalPrice, discountAmount, finalPrice, token, user, setCart } = useContext(CartContext);
