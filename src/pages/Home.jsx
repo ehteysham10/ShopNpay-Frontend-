@@ -1,5 +1,4 @@
 
-
 // import { useState, useEffect, useMemo } from "react";
 // import Navbar from "../components/Navbar";
 // import ProductCard from "../components/ProductCard";
@@ -208,7 +207,7 @@
 //   );
 // };
 
-// export default Home; 
+// export default Home;   
 
 
 
@@ -216,7 +215,6 @@ import { useState, useEffect, useMemo } from "react";
 import Navbar from "../components/Navbar";
 import ProductCard from "../components/ProductCard";
 import Input from "../components/ui/Input";
-import Button from "../components/ui/Button"; // Make sure Button component is available
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -229,74 +227,56 @@ const Home = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  // 🔥 NEW PAGINATION STATES
-  const [page, setPage] = useState(1);
-  const [hasMore, setHasMore] = useState(true);
-  const [loadingMore, setLoadingMore] = useState(false);
-
   const categories = ["All", "Shoes", "Watch", "Phone", "Headphones", "Laptops", "Cameras", "Gaming", "Accessories"];
 
+  // 🔥 SAFE MAX PRICE CALCULATION (Bina crash ya loop ke)
   const maxProductPrice = useMemo(() => {
-    return productsList.length > 0
-      ? Math.max(...productsList.map((p) => p.price))
-      : 1000;
+    if (!productsList || productsList.length === 0) return 1000;
+    const prices = productsList.map((p) => Number(p.price)).filter((p) => !isNaN(p));
+    return prices.length > 0 ? Math.max(...prices) : 1000;
   }, [productsList]);
-
-  // Reset page whenever category or search changes
-  useEffect(() => {
-    setPage(1);
-    setProductsList([]);
-    setHasMore(true);
-  }, [category, search]);
 
   useEffect(() => {
     const fetchProducts = async () => {
-      if (page === 1) setLoading(true);
-      else setLoadingMore(true);
-
+      setLoading(true);
       setError("");
       try {
-        // 🔥 OPTIMIZED: Ek sath 100 ke bajaye sirf 12 products per page manga rahe hain
-        let url = `${API_URL}/products?limit=12&page=${page}`;
+        let url = `${API_URL}/products?limit=100`;
         if (category !== "All") {
           url += `&category=${category.toLowerCase()}`;
         }
         if (search) {
           url += `&search=${search}`;
         }
-
         const response = await fetch(url);
         const result = await response.json();
 
         if (response.ok && result.status === "success") {
-          const rawProducts = result.data.products || result.data || [];
+          const rawProducts = result.data?.products || result.products || [];
 
           const normalized = rawProducts.map(p => ({
-            id: p.productId,
-            productId: p.productId,
+            id: p.productId || p._id,
+            productId: p.productId || p._id,
             _id: p._id,
-            name: p.title,
-            title: p.title,
-            price: p.price,
-            category: p.category ? p.category.charAt(0).toUpperCase() + p.category.slice(1) : "",
-            image: p.images?.[0]?.url || "",
+            name: p.title || p.name || "Untitled Product",
+            title: p.title || p.name || "Untitled Product",
+            price: Number(p.price) || 0,
+            category: p.category ? p.category.charAt(0).toUpperCase() + p.category.slice(1) : "General",
+            image: p.images?.[0]?.url || p.image || "",
             images: p.images || [],
-            description: p.description,
+            description: p.description || "",
             rating: p.rating || 4.5,
             reviewsCount: p.reviewsCount || 0
           }));
 
-          // Append products if pagination page > 1
-          setProductsList(prev => page === 1 ? normalized : [...prev, ...normalized]);
+          setProductsList(normalized);
 
-          // Check if more items are available based on backend totalPages or received count
-          const totalPages = result.data.totalPages || 1;
-          if (page >= totalPages || normalized.length < 12) {
-            setHasMore(false);
-          }
-
-          if (normalized.length > 0 && page === 1) {
-            setPriceRange(Math.max(...normalized.map(p => p.price)));
+          // Only update priceRange if we actually got products back
+          if (normalized.length > 0) {
+            const validPrices = normalized.map(p => p.price).filter(p => !isNaN(p));
+            if (validPrices.length > 0) {
+              setPriceRange(Math.max(...validPrices));
+            }
           }
         } else {
           setError(result.message || "Failed to load products");
@@ -306,30 +286,23 @@ const Home = () => {
         setError("Failed to connect to server");
       } finally {
         setLoading(false);
-        setLoadingMore(false);
       }
     };
 
     fetchProducts();
-  }, [category, search, page]);
+  }, [category, search]);
 
-  // Filter products by price range
+  // Filter products by price range safely
   const filtered = productsList.filter((p) => p.price <= priceRange);
 
   // Sort products dynamically
   const sorted = [...filtered].sort((a, b) => {
     if (sortBy === "PriceLowToHigh") return a.price - b.price;
     if (sortBy === "PriceHighToLow") return b.price - a.price;
-    if (sortBy === "NameAZ") return a.name.localeCompare(b.name);
-    if (sortBy === "NameZA") return b.name.localeCompare(a.name);
+    if (sortBy === "NameAZ") return (a.name || "").localeCompare(b.name || "");
+    if (sortBy === "NameZA") return (b.name || "").localeCompare(a.name || "");
     return 0; // Featured / Default sorting
   });
-
-  const loadMoreProducts = () => {
-    if (!loadingMore && hasMore) {
-      setPage(prev => prev + 1);
-    }
-  };
 
   return (
     <div className="w-full max-w-full overflow-x-hidden min-h-screen bg-slate-50 dark:bg-slate-900 transition-colors duration-300">
@@ -436,29 +409,13 @@ const Home = () => {
             <p className="text-red-500 font-bold">{error}</p>
           </div>
         ) : sorted.length > 0 ? (
-          <>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-2.5 sm:gap-6 md:gap-8 w-full">
-              {sorted.map((p) => (
-                <ProductCard key={p.id} product={p} />
-              ))}
-            </div>
-
-            {/* 🔥 NEW: LOAD MORE BUTTON MECHANISM */}
-            {hasMore && (
-              <div className="w-full flex justify-center mt-12">
-                <Button
-                  onClick={loadMoreProducts}
-                  disabled={loadingMore}
-                  variant="outline"
-                  className="px-8 py-2.5 text-sm font-bold border-purple-600 text-purple-600 dark:text-purple-400 dark:border-purple-400 hover:bg-purple-600 hover:text-white transition-all rounded-xl"
-                >
-                  {loadingMore ? "Loading More..." : "Load More Products"}
-                </Button>
-              </div>
-            )}
-          </>
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-2.5 sm:gap-6 md:gap-8 w-full">
+            {sorted.map((p) => (
+              <ProductCard key={p.id} product={p} />
+            ))}
+          </div>
         ) : (
-          <div className="text-center py-20 bg-white dark:bg-slate-800/20 border border-slate-100 dark:border-slate-800 rounded-3xl p-8 max-w-xl mx-auto shadow-sm">
+          <div className="text-center py-20 bg-white dark:bg-slate-800/20 border border-slate-100 dark:border-slate-800 rounded-3xl p-8 max-w-xl mx-auto shadow-sm w-full">
             <svg className="w-16 h-16 text-slate-300 dark:text-slate-600 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
