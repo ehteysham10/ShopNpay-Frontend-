@@ -12,7 +12,8 @@
 // const API_URL = import.meta.env.VITE_API_URL;
 
 // const CheckoutForm = () => {
-//   const { cart, totalPrice, discountAmount, finalPrice, token, user, setCart } = useContext(CartContext);
+//   // 👀 setCart ko destructuring se hata diya hai takay TypeError completely khatam ho jaye
+//   const { cart, totalPrice, discountAmount, finalPrice, token, user } = useContext(CartContext);
 //   const navigate = useNavigate();
 //   const stripe = useStripe();
 //   const elements = useElements();
@@ -131,13 +132,22 @@
 //             phone
 //           })
 //         });
+
 //         const confirmResultData = await confirmResponse.json();
+
 //         if (confirmResponse.ok && confirmResultData.status === "success") {
 //           toast.success("Order placed successfully!");
-//           setCart([]);
-//           navigate("/");
+
+//           // 🔥 FIXED: setCart ko remove kar diya hai taaki state crash na ho.
+//           // Redirection ke baad jab user Orders page par jayega ya wapis Cart kholega, 
+//           // to data backend ke context fetch se automatic safe sync ho jayega.
+//           setSubmitting(false);
+
+//           return navigate("/orders");
 //         } else {
 //           toast.error(confirmResultData.message || "Order verification failed.");
+//           setSubmitting(false);
+//           return;
 //         }
 //       }
 //     } catch (error) {
@@ -376,12 +386,6 @@
 
 
 
-
-
-
-
-
-
 import { useContext, useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
@@ -396,7 +400,8 @@ const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || 
 const API_URL = import.meta.env.VITE_API_URL;
 
 const CheckoutForm = () => {
-  const { cart, totalPrice, discountAmount, finalPrice, token, user, setCart } = useContext(CartContext);
+  // 🔥 UPDATED: setCart aur setAppliedCoupon dono ko context se destructure kar liya hai
+  const { cart, totalPrice, discountAmount, finalPrice, token, user, setCart, setAppliedCoupon } = useContext(CartContext);
   const navigate = useNavigate();
   const stripe = useStripe();
   const elements = useElements();
@@ -521,25 +526,11 @@ const CheckoutForm = () => {
         if (confirmResponse.ok && confirmResultData.status === "success") {
           toast.success("Order placed successfully!");
 
-          // 1. Backend database se cart ko empty karne ki koshish karain
-          try {
-            await fetch(`${API_URL}/cart/clear`, {
-              method: "DELETE",
-              headers: {
-                Authorization: `Bearer ${token}`
-              }
-            });
-          } catch (cartErr) {
-            console.error("Backend cart clear endpoint error:", cartErr);
-          }
-
-          // 2. Frontend local context state clear karain
+          // 🔥 ADJUSTED: Frontend UI cart clear aur coupon code flush logic safely applied!
           setCart([]);
-
-          // 3. State update safely off karain navigation se pehle
+          setAppliedCoupon(null);
           setSubmitting(false);
 
-          // 4. Yahin se return navigate kar jyen takay control thread direct exit ho jaye
           return navigate("/orders");
         } else {
           toast.error(confirmResultData.message || "Order verification failed.");
@@ -549,7 +540,6 @@ const CheckoutForm = () => {
       }
     } catch (error) {
       console.error("Checkout error:", error);
-      // Ab ye error tabhi aayega jab sach me operation crash hua ho
       toast.error("An error occurred during checkout.");
     } finally {
       setSubmitting(false);
