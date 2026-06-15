@@ -1,355 +1,3 @@
-// import { useParams, Link } from "react-router-dom";
-// import { useState, useContext, useEffect } from "react";
-// import Navbar from "../components/Navbar";
-// import { CartContext } from "../context/CartContext";
-// import Button from "../components/ui/Button";
-// import ProductCard from "../components/ProductCard";
-
-// const Product = () => {
-//   const { id } = useParams();
-//   const {
-//     addToCart,
-//     wishlist,
-//     toggleWishlist,
-//     isCartOpen,
-//     toggleCart,
-//     token,
-//     user
-//   } = useContext(CartContext);
-
-//   const [product, setProduct] = useState(null);
-//   const [loading, setLoading] = useState(true);
-//   const [error, setError] = useState("");
-
-//   const [reviews, setReviews] = useState([]);
-//   const [reviewsLoading, setReviewsLoading] = useState(true);
-//   const [related, setRelated] = useState([]);
-//   const [submittingReview, setSubmittingReview] = useState(false);
-
-//   const [currentImgIndex, setCurrentImgIndex] = useState(0);
-//   const [isZoomOpen, setIsZoomOpen] = useState(false);
-//   const [zoomScale, setZoomScale] = useState(1);
-
-//   const [touchStart, setTouchStart] = useState(0);
-//   const [touchEnd, setTouchEnd] = useState(0);
-
-//   const [reviewForm, setReviewForm] = useState({
-//     comment: "",
-//     rating: 5
-//   });
-
-//   const API_URL = import.meta.env.VITE_API_URL;
-
-//   const normalizeProduct = (p) => {
-//     if (!p) return null;
-//     return {
-//       id: p.productId || p._id,
-//       productId: p.productId,
-//       _id: p._id,
-//       name: p.title || p.name,
-//       title: p.title || p.name,
-//       price: p.price || 0,
-//       category: p.category
-//         ? p.category.charAt(0).toUpperCase() + p.category.slice(1)
-//         : "General",
-//       image: p.images?.[0]?.url || p.image || "",
-//       images: p.images || [],
-//       description: p.description || "",
-//       rating: p.rating || 4.5
-//     };
-//   };
-//   // ================= FETCH PRODUCT =================
-//   useEffect(() => {
-//     const fetchProductDetails = async () => {
-//       setLoading(true);
-//       setError("");
-
-//       try {
-//         // Sahi URL 'products' hai aur backend 'productId' expect kar raha hai
-//         const res = await fetch(`${API_URL}/products/${id}`);
-//         const result = await res.json();
-
-//         console.log("PRODUCT API RESPONSE:", result);
-
-//         if (res.ok && result.success) {
-//           // Aapka backend data ko 'product' ke object mein bhej raha hai
-//           const raw = result.product;
-//           const norm = normalizeProduct(raw);
-
-//           setProduct(norm);
-//           setCurrentImgIndex(0);
-
-//           // Related products fetch karna
-//           if (norm?.category) {
-//             const relRes = await fetch(
-//               `${API_URL}/products?category=${norm.category.toLowerCase()}&limit=4`
-//             );
-//             const relResult = await relRes.json();
-
-//             if (relRes.ok && relResult.success) {
-//               // Backend list ko 'products' array mein bhej raha hai
-//               const rawProducts = relResult.products || [];
-//               const filtered = rawProducts
-//                 .map(normalizeProduct)
-//                 .filter((p) => p && p.id !== norm.id);
-
-//               setRelated(filtered);
-//             }
-//           }
-//         } else {
-//           setError(result.message || "Product not found");
-//         }
-//       } catch (err) {
-//         console.error("Fetch Error:", err);
-//         setError("Failed to load product");
-//       } finally {
-//         setLoading(false);
-//       }
-//     };
-
-//     if (id) {
-//       fetchProductDetails();
-//     }
-//   }, [id, API_URL]);
-//   // ================= FETCH REVIEWS =================
-//   useEffect(() => {
-//     const fetchReviews = async () => {
-//       setReviewsLoading(true);
-
-//       try {
-//         const res = await fetch(`${API_URL}/products/${id}/reviews`);
-//         const result = await res.json();
-
-//         if (res.ok && result.success) {
-//           setReviews(result.data || []);
-//         }
-//       } catch (err) {
-//         console.error(err);
-//       } finally {
-//         setReviewsLoading(false);
-//       }
-//     };
-
-//     fetchReviews();
-//   }, [id, API_URL]);
-
-//   // ================= LOADING =================
-//   if (loading) {
-//     return (
-//       <>
-//         <Navbar />
-//         <div className="flex items-center justify-center h-[70vh]">
-//           Loading product...
-//         </div>
-//       </>
-//     );
-//   }
-
-//   // ================= ERROR =================
-//   if (error || !product) {
-//     return (
-//       <>
-//         <Navbar />
-//         <div className="text-center py-20">
-//           <h2 className="text-xl">{error || "Product not found"}</h2>
-//           <Link to="/" className="text-purple-500">
-//             Back Home
-//           </Link>
-//         </div>
-//       </>
-//     );
-//   }
-
-//   const images =
-//     product.images && product.images.length > 0
-//       ? product.images
-//       : [{ url: product.image }];
-
-//   const activeImage = images[currentImgIndex]?.url;
-
-//   const isFavorited = wishlist.some(
-//     (item) =>
-//       item.id === product.id ||
-//       item._id === product._id ||
-//       item === product.id
-//   );
-
-//   const handleAddToCart = () => {
-//     addToCart(product);
-//     if (!isCartOpen) toggleCart();
-//   };
-
-//   const nextImage = () => {
-//     setCurrentImgIndex((prev) =>
-//       prev === images.length - 1 ? 0 : prev + 1
-//     );
-//   };
-
-//   const prevImage = () => {
-//     setCurrentImgIndex((prev) =>
-//       prev === 0 ? images.length - 1 : prev - 1
-//     );
-//   };
-
-//   const handleAddReview = async (e) => {
-//     e.preventDefault();
-
-//     if (!token) return alert("Login required");
-//     if (!reviewForm.comment.trim()) return;
-
-//     setSubmittingReview(true);
-
-//     try {
-//       const res = await fetch(
-//         `${API_URL}/products/${id}/reviews`,
-//         {
-//           method: "POST",
-//           headers: {
-//             "Content-Type": "application/json",
-//             Authorization: `Bearer ${token}`
-//           },
-//           body: JSON.stringify({
-//             rating: Number(reviewForm.rating),
-//             comment: reviewForm.comment
-//           })
-//         }
-//       );
-
-//       const result = await res.json();
-
-//       if (res.ok && result.success) {
-//         setReviews([result.data, ...reviews]);
-//         setReviewForm({ comment: "", rating: 5 });
-//       } else {
-//         alert(result.message || "Failed");
-//       }
-//     } catch (err) {
-//       console.error(err);
-//     } finally {
-//       setSubmittingReview(false);
-//     }
-//   };
-
-//   return (
-//     <>
-//       <Navbar />
-
-//       <div className="max-w-6xl mx-auto p-4">
-//         {/* PRODUCT */}
-//         <div className="grid md:grid-cols-2 gap-8">
-//           {/* IMAGES */}
-//           <div>
-//             <img
-//               src={activeImage}
-//               alt={product.name}
-//               className="w-full h-[400px] object-contain"
-//               onClick={() => setIsZoomOpen(true)}
-//             />
-
-//             {images.length > 1 && (
-//               <div className="flex gap-2 mt-3">
-//                 {images.map((img, i) => (
-//                   <img
-//                     key={i}
-//                     src={img.url}
-//                     onClick={() => setCurrentImgIndex(i)}
-//                     className={`w-16 h-16 object-cover border ${i === currentImgIndex
-//                       ? "border-purple-500"
-//                       : ""
-//                       }`}
-//                   />
-//                 ))}
-//               </div>
-//             )}
-//           </div>
-
-//           {/* DETAILS */}
-//           <div>
-//             <h1 className="text-2xl font-bold">{product.name}</h1>
-//             <p className="text-gray-500">{product.category}</p>
-//             <p className="text-xl mt-2">${product.price}</p>
-
-//             <p className="mt-4">{product.description}</p>
-
-//             <div className="mt-4 flex gap-3">
-//               <Button onClick={handleAddToCart}>
-//                 Add to Cart
-//               </Button>
-
-//               <Button
-//                 onClick={() => toggleWishlist(product.id)}
-//                 variant={isFavorited ? "secondary" : "outline"}
-//               >
-//                 Wishlist
-//               </Button>
-//             </div>
-//           </div>
-//         </div>
-
-//         {/* REVIEWS */}
-//         <div className="mt-10">
-//           <h2 className="text-xl font-bold">
-//             Reviews ({reviews.length})
-//           </h2>
-
-//           {reviews.map((r) => (
-//             <div key={r._id} className="border p-3 mt-2">
-//               <p className="font-bold">
-//                 {r.user?.name || "User"}
-//               </p>
-//               <p>{r.comment}</p>
-//             </div>
-//           ))}
-
-//           {token && (
-//             <form
-//               onSubmit={handleAddReview}
-//               className="mt-4 space-y-2"
-//             >
-//               <textarea
-//                 value={reviewForm.comment}
-//                 onChange={(e) =>
-//                   setReviewForm({
-//                     ...reviewForm,
-//                     comment: e.target.value
-//                   })
-//                 }
-//                 className="border w-full p-2"
-//               />
-
-//               <Button type="submit">
-//                 {submittingReview
-//                   ? "Posting..."
-//                   : "Post Review"}
-//               </Button>
-//             </form>
-//           )}
-//         </div>
-
-//         {/* RELATED */}
-//         {related.length > 0 && (
-//           <div className="mt-10">
-//             <h2 className="text-xl font-bold">
-//               Related Products
-//             </h2>
-
-//             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-//               {related.map((p) => (
-//                 <ProductCard key={p.id} product={p} />
-//               ))}
-//             </div>
-//           </div>
-//         )}
-//       </div>
-//     </>
-//   );
-// };
-
-// export default Product; 
-
-
-
-
 import { useParams, Link } from "react-router-dom";
 import { useState, useContext, useEffect } from "react";
 import Navbar from "../components/Navbar";
@@ -386,13 +34,15 @@ const Product = () => {
 
   const API_URL = import.meta.env.VITE_API_URL;
 
+  // 100% Secure normalization function to map data safely
   const normalizeProduct = (p) => {
     if (!p) return null;
+    const productId = p.productId || p.id || p._id || id;
     return {
-      id: p._id || p.productId || p.id,
-      productId: p.productId || p._id,
-      _id: p._id,
-      name: p.name || p.title || "",
+      id: productId,
+      productId,
+      _id: p._id || "",
+      name: p.title || p.name || "",
       title: p.title || p.name || "",
       price: p.price || 0,
       category: p.category
@@ -408,7 +58,6 @@ const Product = () => {
   // ================= FETCH PRODUCT =================
   useEffect(() => {
     const fetchProductDetails = async () => {
-      // Direct client side execution block if ID parameter evaluates to literal fallback strings
       if (!id || id === "undefined") {
         setError("Invalid parameter link: Product ID is missing.");
         setLoading(false);
@@ -419,33 +68,48 @@ const Product = () => {
       setError("");
 
       try {
-        // Backend mapping: endpoint routes configuration specifies base route '/products/:productId'[cite: 6]
         const res = await fetch(`${API_URL}/products/${id}`);
         const result = await res.json();
 
         console.log("PRODUCT API RESPONSE:", result);
 
-        if (res.ok && result.success) {
-          const raw = result.product;
+        if (res.ok && (result.success || result.status === "success")) {
+          const raw = result.product || result.data;
           const norm = normalizeProduct(raw);
 
           setProduct(norm);
           setCurrentImgIndex(0);
 
-          // Related products fetch logic parsing
+          // Related Products Fetch
           if (norm?.category) {
-            const relRes = await fetch(
-              `${API_URL}/products?category=${norm.category.toLowerCase()}&limit=4`
-            );
-            const relResult = await relRes.json();
+            try {
+              const relRes = await fetch(
+                `${API_URL}/products?category=${norm.category.toLowerCase()}&limit=5`
+              );
+              const relResult = await relRes.json();
 
-            if (relRes.ok && relResult.success) {
-              const rawProducts = relResult.products || [];
-              const filtered = rawProducts
-                .map(normalizeProduct)
-                .filter((p) => p && p.id !== norm.id);
+              if (relRes.ok) {
+                // Safeguard against any backend key structure variations
+                let rawProducts = [];
+                if (Array.isArray(relResult)) {
+                  rawProducts = relResult;
+                } else if (Array.isArray(relResult.products)) {
+                  rawProducts = relResult.products;
+                } else if (Array.isArray(relResult.data)) {
+                  rawProducts = relResult.data;
+                } else if (relResult.data && Array.isArray(relResult.data.products)) {
+                  rawProducts = relResult.data.products;
+                }
 
-              setRelated(filtered);
+                const filtered = rawProducts
+                  .map(normalizeProduct)
+                  .filter((p) => p && p.productId !== norm.productId);
+
+                setRelated(filtered);
+              }
+            } catch (relErr) {
+              console.error("Related products fetch failed silently:", relErr);
+              setRelated([]); // Fallback to empty array so page doesn't crash
             }
           }
         } else {
@@ -454,7 +118,7 @@ const Product = () => {
       } catch (err) {
         console.error("Fetch Error:", err);
         setError("Failed to load products");
-      } {
+      } finally {
         setLoading(false);
       }
     };
@@ -471,7 +135,7 @@ const Product = () => {
         const res = await fetch(`${API_URL}/products/${id}/reviews`);
         const result = await res.json();
 
-        if (res.ok && result.success) {
+        if (res.ok && (result.success || result.status === "success")) {
           setReviews(result.data || []);
         }
       } catch (err) {
@@ -520,9 +184,10 @@ const Product = () => {
 
   const isFavorited = wishlist.some(
     (item) =>
-      item.id === product.id ||
-      item._id === product._id ||
-      item === product.id
+      item === product.productId ||
+      item === product.id ||
+      (item && (item.id === product.productId || item.productId === product.productId)) ||
+      (item && item._id === product._id)
   );
 
   const handleAddToCart = () => {
@@ -556,7 +221,7 @@ const Product = () => {
 
       const result = await res.json();
 
-      if (res.ok && result.success) {
+      if (res.ok && (result.success || result.status === "success")) {
         setReviews([result.data, ...reviews]);
         setReviewForm({ comment: "", rating: 5 });
       } else {
@@ -574,7 +239,7 @@ const Product = () => {
       <Navbar />
 
       <div className="max-w-6xl mx-auto p-4 dark:text-slate-100">
-        {/* PRODUCT */}
+        {/* PRODUCT SECTION */}
         <div className="grid md:grid-cols-2 gap-8">
           {/* IMAGES */}
           <div className="flex flex-col items-center">
@@ -593,8 +258,8 @@ const Product = () => {
                     alt=""
                     onClick={() => setCurrentImgIndex(i)}
                     className={`w-16 h-16 object-cover rounded-lg border cursor-pointer transition-all ${i === currentImgIndex
-                      ? "border-purple-500 scale-105 shadow-md"
-                      : "border-slate-200 dark:border-slate-700 opacity-70 hover:opacity-100"
+                        ? "border-purple-500 scale-105 shadow-md"
+                        : "border-slate-200 dark:border-slate-700 opacity-70 hover:opacity-100"
                       }`}
                   />
                 ))}
@@ -619,7 +284,7 @@ const Product = () => {
               </Button>
 
               <Button
-                onClick={() => toggleWishlist(product.id)}
+                onClick={() => toggleWishlist(product.productId || product.id)}
                 variant={isFavorited ? "secondary" : "outline"}
                 className="px-6 py-3"
               >
@@ -629,7 +294,7 @@ const Product = () => {
           </div>
         </div>
 
-        {/* REVIEWS */}
+        {/* CUSTOMER REVIEWS */}
         <div className="mt-12 border-t border-slate-100 dark:border-slate-800 pt-8">
           <h2 className="text-2xl font-extrabold text-slate-800 dark:text-slate-100">
             Customer Reviews ({reviews.length})
@@ -698,8 +363,8 @@ const Product = () => {
           )}
         </div>
 
-        {/* RELATED */}
-        {related.length > 0 && (
+        {/* RELATED PRODUCTS */}
+        {related && related.length > 0 && (
           <div className="mt-16 border-t border-slate-100 dark:border-slate-800 pt-8">
             <h2 className="text-2xl font-extrabold text-slate-800 dark:text-slate-100 mb-6">
               Related Products
