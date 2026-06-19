@@ -68,15 +68,15 @@ const Login = () => {
     <>
       <Navbar />
 
-      <div className="flex-grow flex items-center justify-center px-6 py-16 bg-slate-50/50">
-        <div className="bg-white border border-slate-100 rounded-3xl p-8 max-w-md w-full shadow-xl shadow-slate-100/50">
+      <div className="flex-grow flex items-center justify-center px-6 py-16" style={{ background: '#FAFAF8' }}>
+        <div className="rounded-3xl p-8 max-w-md w-full" style={{ background: '#FFFFFF', border: '1px solid #EDE5D8', boxShadow: '0 8px 40px rgba(139,107,68,0.10)' }}>
           <div className="text-center mb-8">
-            <h1 className="text-3xl font-black text-slate-800 tracking-tight">
+            <h1 className="text-3xl font-black tracking-tight" style={{ color: '#2C2416' }}>
               Welcome Back
             </h1>
-            <p className="text-slate-400 text-sm font-medium mt-2">
+            <p className="text-sm font-medium mt-2" style={{ color: '#A08B70' }}>
               Don't have an account?{" "}
-              <Link to="/register" className="text-purple-600 font-bold hover:underline">
+              <Link to="/register" className="font-bold hover:underline" style={{ color: '#8B6914' }}>
                 Register
               </Link>
             </p>
@@ -105,7 +105,8 @@ const Login = () => {
             <div className="flex justify-end -mt-1">
               <Link
                 to="/forgot-password"
-                className="text-xs text-purple-600 font-semibold hover:underline hover:text-purple-700 transition-colors"
+                className="text-xs font-semibold hover:underline transition-colors"
+                style={{ color: '#8B6914' }}
               >
                 Forgot Password?
               </Link>
@@ -128,7 +129,7 @@ const Login = () => {
               <div className="w-full border-t border-slate-200"></div>
             </div>
             <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-white px-2 text-slate-400 font-semibold">Or continue with</span>
+              <span className="px-2 font-semibold" style={{ background: '#FFFFFF', color: '#A08B70' }}>Or continue with</span>
             </div>
           </div>
 

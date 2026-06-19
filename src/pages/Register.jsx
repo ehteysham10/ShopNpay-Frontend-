@@ -163,18 +163,18 @@ const Register = () => {
   }, [loginGoogle, navigate]);
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#0b1329]">
+    <div className="min-h-screen flex flex-col" style={{ background: '#FAFAF8' }}>
       <Navbar />
 
       <div className="flex-grow flex items-center justify-center px-6 py-16">
-        <div className="bg-white border border-slate-100 rounded-3xl p-8 max-w-md w-full shadow-xl">
+        <div className="rounded-3xl p-8 max-w-md w-full" style={{ background: '#FFFFFF', border: '1px solid #EDE5D8', boxShadow: '0 8px 40px rgba(139,107,68,0.10)' }}>
           <div className="text-center mb-8">
-            <h1 className="text-3xl font-black text-slate-800 tracking-tight">
+            <h1 className="text-3xl font-black tracking-tight" style={{ color: '#2C2416' }}>
               Create Account
             </h1>
-            <p className="text-slate-400 text-sm font-medium mt-2">
+            <p className="text-sm font-medium mt-2" style={{ color: '#A08B70' }}>
               Already have an account?{" "}
-              <Link to="/login" className="text-purple-600 font-bold hover:underline">
+              <Link to="/login" className="font-bold hover:underline" style={{ color: '#8B6914' }}>
                 Login
               </Link>
             </p>
@@ -229,7 +229,7 @@ const Register = () => {
               <Button
                 type="submit"
                 variant="primary"
-                className="w-full py-3 text-sm tracking-wider uppercase font-bold bg-purple-600 hover:bg-purple-700 text-white shadow-md rounded-xl transition-colors"
+                className="w-full py-3 text-sm tracking-wider uppercase font-bold rounded-xl"
                 disabled={loading}
               >
                 {loading ? "Registering..." : "Register"}
@@ -242,7 +242,7 @@ const Register = () => {
               <div className="w-full border-t border-slate-200"></div>
             </div>
             <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-white px-2 text-slate-400 font-semibold">Or continue with</span>
+              <span className="px-2 font-semibold" style={{ background: '#FFFFFF', color: '#A08B70' }}>Or continue with</span>
             </div>
           </div>
 

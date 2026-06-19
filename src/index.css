@@ -4,51 +4,61 @@
 
 @layer base {
   :root {
-    --color-primary-50: #f5f3ff;
-    --color-primary-100: #ede9fe;
-    --color-primary-200: #ddd6fe;
-    --color-primary-300: #c4b5fd;
-    --color-primary-400: #a78bfa;
-    --color-primary-500: #8b5cf6;
-    --color-primary-600: #7c3aed;
-    --color-primary-700: #6d28d9;
-    --color-primary-800: #5b21b6;
-    --color-primary-900: #4c1d95;
-    
-    --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    /* Warm Cream Editorial Palette */
+    --color-bg: #FAFAF8;
+    --color-bg-secondary: #F5F3F0;
+    --color-surface: #FFFFFF;
+    --color-surface-warm: #FAF7F2;
+    --color-border: #EDE5D8;
+    --color-border-light: #F0EAE0;
+
+    /* Brand Gold/Amber */
+    --color-primary: #8B6914;
+    --color-primary-hover: #7A5C12;
+    --color-primary-light: #C4954A;
+    --color-primary-bg: #FDF8EE;
+    --color-primary-50: #FFFBF0;
+    --color-primary-100: #FEF3C7;
+
+    /* Text */
+    --color-text-primary: #2C2416;
+    --color-text-secondary: #4A3D2C;
+    --color-text-muted: #7A6A55;
+    --color-text-subtle: #A08B70;
+    --color-text-placeholder: #C4A882;
+
+    --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   }
 
   body {
-    @apply bg-slate-50 text-slate-800 antialiased selection:bg-purple-200 selection:text-purple-900 overflow-x-hidden;
+    @apply antialiased overflow-x-hidden;
+    background-color: var(--color-bg);
+    color: var(--color-text-primary);
     font-family: var(--font-sans);
+    selection-color: var(--color-primary);
   }
 
-  /* Smooth scroll */
   html {
     scroll-behavior: smooth;
     overflow-x: hidden;
   }
 }
 
-/* Base root container setup */
+/* Base root container */
 #root {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
   width: 100%;
   overflow-x: hidden;
+  background-color: var(--color-bg);
 }
 
-/* Hide scrollbar for Chrome, Safari and Opera */
-.scrollbar-none::-webkit-scrollbar {
-  display: none;
-}
-/* Hide scrollbar for IE, Edge and Firefox */
-.scrollbar-none {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
-}
+/* Hide scrollbar */
+.scrollbar-none::-webkit-scrollbar { display: none; }
+.scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }
 
+/* Animations */
 @keyframes fade-in {
   from { opacity: 0; transform: translateY(8px); }
   to { opacity: 1; transform: translateY(0); }
@@ -72,30 +82,34 @@
   animation: fade-in 0.6s ease-out forwards;
 }
 
+/* Shimmer skeleton */
 .shimmer {
   background: linear-gradient(
     90deg,
-    rgb(241 245 249 / 1) 0%,
-    rgb(226 232 240 / 1) 50%,
-    rgb(241 245 249 / 1) 100%
+    #F5F0E8 0%,
+    #EDE5D8 50%,
+    #F5F0E8 100%
   );
   background-size: 200% 100%;
   animation: shimmer 1.5s ease-in-out infinite;
 }
 
-.dark .shimmer {
-  background: linear-gradient(
-    90deg,
-    rgb(51 65 85 / 0.4) 0%,
-    rgb(71 85 105 / 0.6) 50%,
-    rgb(51 65 85 / 0.4) 100%
-  );
-  background-size: 200% 100%;
-}
-
+/* Hero mesh overlay */
 .hero-mesh {
   background-image:
-    radial-gradient(at 20% 30%, rgb(139 92 246 / 0.15) 0px, transparent 50%),
-    radial-gradient(at 80% 20%, rgb(59 130 246 / 0.12) 0px, transparent 50%),
-    radial-gradient(at 50% 80%, rgb(168 85 247 / 0.08) 0px, transparent 50%);
+    radial-gradient(at 20% 30%, rgba(196, 149, 74, 0.12) 0px, transparent 50%),
+    radial-gradient(at 80% 20%, rgba(139, 105, 20, 0.08) 0px, transparent 50%),
+    radial-gradient(at 50% 80%, rgba(210, 180, 140, 0.08) 0px, transparent 50%);
+}
+
+/* Warm card surface */
+.card-warm {
+  background: rgba(255,255,255,0.92);
+  border: 1px solid var(--color-border);
+  box-shadow: 0 2px 16px rgba(139, 107, 68, 0.07);
+}
+
+/* Range slider warm */
+input[type="range"] {
+  accent-color: var(--color-primary);
 }

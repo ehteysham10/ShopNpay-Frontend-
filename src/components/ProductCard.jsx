@@ -3,8 +3,21 @@ import { CartContext } from "../context/CartContext";
 import { Link } from "react-router-dom";
 import Button from "./ui/Button";
 
+const C = {
+  card:       'rgba(255,255,255,0.95)',
+  border:     '#EDE5D8',
+  borderHover:'#D4C4B0',
+  bg:         '#FAF7F2',
+  bgImg:      '#F5F0E8',
+  text:       '#2C2416',
+  textMuted:  '#7A6A55',
+  textSubtle: '#A08B70',
+  accent:     '#8B6914',
+  catBg:      'rgba(255,255,255,0.88)',
+};
+
 const ProductCard = ({ product }) => {
-  const { addToCart, wishlist, toggleWishlist, isCartOpen, toggleCart } = useContext(CartContext);
+  const { addToCart, wishlist, toggleWishlist, isCartOpen, toggleCart, token } = useContext(CartContext);
   const [imgLoaded, setImgLoaded] = useState(false);
 
   if (!product) return null;
@@ -19,11 +32,11 @@ const ProductCard = ({ product }) => {
   );
 
   const handleAddToCart = () => {
-    const safeProduct = {
-      ...product,
-      id: targetId,
-      productId: targetId,
-    };
+    if (!token) {
+      addToCart(product);
+      return;
+    }
+    const safeProduct = { ...product, id: targetId, productId: targetId };
     addToCart(safeProduct);
     if (!isCartOpen) toggleCart();
   };
@@ -31,11 +44,27 @@ const ProductCard = ({ product }) => {
   const displayImage = product.image || (product.images && product.images[0]?.url) || "";
 
   return (
-    <div className="group w-full h-full bg-white dark:bg-slate-800/80 border border-slate-100 dark:border-slate-800/60 rounded-2xl overflow-hidden hover:shadow-xl hover:shadow-purple-500/5 dark:hover:shadow-purple-950/20 hover:-translate-y-1 transition-all duration-300 flex flex-col relative">
-
+    <div
+      className="group w-full h-full rounded-2xl overflow-hidden flex flex-col relative transition-all duration-300 hover:-translate-y-1.5"
+      style={{
+        background: C.card,
+        border: `1px solid ${C.border}`,
+        boxShadow: '0 2px 12px rgba(139,107,68,0.06)',
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.boxShadow = '0 8px 32px rgba(139,107,68,0.14)';
+        e.currentTarget.style.borderColor = C.borderHover;
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.boxShadow = '0 2px 12px rgba(139,107,68,0.06)';
+        e.currentTarget.style.borderColor = C.border;
+      }}
+    >
+      {/* Wishlist button */}
       <button
         onClick={() => toggleWishlist(targetId)}
-        className="absolute top-2.5 right-2.5 sm:top-3 sm:right-3 z-10 p-2 rounded-xl bg-white/90 dark:bg-slate-900/90 backdrop-blur-md shadow-sm text-slate-400 hover:text-red-500 hover:scale-110 active:scale-95 transition-all cursor-pointer"
+        className="absolute top-2.5 right-2.5 sm:top-3 sm:right-3 z-10 p-2 rounded-xl backdrop-blur-md shadow-sm text-slate-400 hover:text-red-500 hover:scale-110 active:scale-95 transition-all cursor-pointer"
+        style={{ background: 'rgba(255,255,255,0.9)', border: `1px solid ${C.border}` }}
         aria-label="Add to Wishlist"
       >
         <svg
@@ -53,10 +82,12 @@ const ProductCard = ({ product }) => {
         </svg>
       </button>
 
-      <div className="relative overflow-hidden h-36 sm:h-44 md:h-48 bg-gradient-to-b from-slate-50 to-slate-100/50 dark:from-slate-900/40 dark:to-slate-800/40 flex items-center justify-center p-3">
-        {!imgLoaded && (
-          <div className="absolute inset-0 shimmer" />
-        )}
+      {/* Image area */}
+      <div
+        className="relative overflow-hidden h-44 sm:h-52 md:h-56 flex items-center justify-center p-4"
+        style={{ background: C.bgImg }}
+      >
+        {!imgLoaded && <div className="absolute inset-0 shimmer" />}
         <Link to={`/product/${targetId}`} className="block w-full h-full relative z-[1]">
           <img
             src={displayImage}
@@ -64,45 +95,56 @@ const ProductCard = ({ product }) => {
             loading="lazy"
             decoding="async"
             onLoad={() => setImgLoaded(true)}
-            className={`w-full h-full object-contain transition-all duration-500 group-hover:scale-105 ${
+            className={`w-full h-full object-contain transition-all duration-500 group-hover:scale-108 ${
               imgLoaded ? "opacity-100" : "opacity-0"
             }`}
+            style={{ transform: imgLoaded ? undefined : 'scale(1)' }}
           />
         </Link>
-        <span className="absolute top-2.5 left-2.5 z-10 bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm px-2 py-0.5 sm:px-2.5 sm:py-1 text-[9px] sm:text-[10px] font-extrabold text-slate-500 dark:text-slate-400 rounded-lg shadow-sm tracking-wider uppercase">
+        {/* Category badge */}
+        <span
+          className="absolute top-2.5 left-2.5 z-10 px-2 py-0.5 sm:px-2.5 sm:py-1 text-[9px] sm:text-[10px] font-extrabold rounded-lg shadow-sm tracking-wider uppercase"
+          style={{ background: C.catBg, color: C.textSubtle, border: `1px solid ${C.border}` }}
+        >
           {product.category || "General"}
         </span>
       </div>
 
+      {/* Info area */}
       <div className="p-3 sm:p-4 flex-grow flex flex-col justify-between">
         <div>
           <Link to={`/product/${targetId}`}>
-            <h2 className="font-bold text-slate-800 dark:text-slate-100 text-sm sm:text-base group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors line-clamp-1">
+            <h2
+              className="font-bold text-sm sm:text-base line-clamp-1 transition-colors"
+              style={{ color: C.text }}
+              onMouseEnter={(e) => e.target.style.color = C.accent}
+              onMouseLeave={(e) => e.target.style.color = C.text}
+            >
               {product.name || product.title}
             </h2>
           </Link>
-          <p className="text-slate-400 dark:text-slate-500 text-[11px] sm:text-xs mt-1 line-clamp-2 leading-relaxed">
+          <p className="text-[11px] sm:text-xs mt-1 line-clamp-2 leading-relaxed" style={{ color: C.textSubtle }}>
             {product.description || "Premium quality build"}
           </p>
           {product.rating && (
             <div className="flex items-center gap-1 mt-1.5">
-              <div className="flex text-amber-400 text-[10px]">
+              <div className="flex text-amber-500 text-[10px]">
                 {"★".repeat(Math.floor(product.rating))}
                 {product.rating % 1 >= 0.5 ? "★" : ""}
               </div>
-              <span className="text-slate-400 dark:text-slate-500 text-[10px] font-semibold">
+              <span className="text-[10px] font-semibold" style={{ color: C.textSubtle }}>
                 {product.rating}
               </span>
             </div>
           )}
         </div>
 
-        <div className="mt-3 sm:mt-4 pt-3 border-t border-slate-50 dark:border-slate-700/50">
+        <div className="mt-3 sm:mt-4 pt-3" style={{ borderTop: `1px solid ${C.border}` }}>
           <div className="flex justify-between items-center mb-2.5">
-            <span className="text-slate-400 dark:text-slate-500 text-[10px] sm:text-xs font-medium uppercase tracking-wide">
+            <span className="text-[10px] sm:text-xs font-medium uppercase tracking-wide" style={{ color: C.textSubtle }}>
               Price
             </span>
-            <span className="text-base sm:text-lg font-black text-slate-900 dark:text-slate-50">
+            <span className="text-base sm:text-lg font-black" style={{ color: C.text }}>
               ${product.price}
             </span>
           </div>

@@ -15,7 +15,8 @@ const Input = ({
       {label && (
         <label
           htmlFor={inputId}
-          className="text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-wider block"
+          className="text-xs font-bold mb-1.5 uppercase tracking-wider block"
+          style={{ color: '#A08B70' }}
         >
           {label}
         </label>
@@ -23,9 +24,24 @@ const Input = ({
       <input
         id={inputId}
         type={type}
-        className={`w-full border border-slate-200 dark:border-slate-700 focus:border-transparent focus:ring-2 focus:ring-purple-500 rounded-xl px-4 py-3 outline-none transition-all duration-200 text-sm text-slate-800 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 bg-slate-50 dark:bg-slate-800 shadow-sm hover:border-slate-300 dark:hover:border-slate-600 ${
-          error ? "border-red-400 focus:ring-red-400" : ""
+        className={`w-full rounded-xl px-4 py-3 outline-none transition-all duration-200 text-sm placeholder:font-normal shadow-sm ${
+          error ? "border-red-400" : ""
         } ${className}`}
+        style={{
+          background: '#FAF7F2',
+          border: error ? '1px solid #F87171' : '1px solid #EDE5D8',
+          color: '#2C2416',
+        }}
+        onFocus={(e) => {
+          e.target.style.borderColor = '#C4954A';
+          e.target.style.boxShadow = '0 0 0 3px rgba(196,149,74,0.12)';
+          if (props.onFocus) props.onFocus(e);
+        }}
+        onBlur={(e) => {
+          e.target.style.borderColor = error ? '#F87171' : '#EDE5D8';
+          e.target.style.boxShadow = 'none';
+          if (props.onBlur) props.onBlur(e);
+        }}
         {...props}
       />
       {error && (

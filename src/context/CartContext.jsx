@@ -1619,56 +1619,37 @@ const CartProvider = ({ children }) => {
 
   const addToCart = async (product) => {
     const productId = product.productId || product.id || product._id;
-    if (token) {
-      try {
-        const response = await fetch(`${API_URL}/cart/${productId}`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`
-          }
-        });
-        const result = await response.json();
-        if (response.ok && result.status === "success") {
-          const rawData = result.data?.items || result.data || [];
-          setCart(normalizeCart(rawData));
-          toast.success("Added to cart!");
-        } else {
-          if (result.message && result.message.includes("already in your cart")) {
-            const existingItem = cart.find(item => item.id === productId);
-            if (existingItem) {
-              const newQty = Math.min((existingItem.qty || existingItem.quantity) + 1, 5);
-              updateCartQty(productId, newQty);
-              toast.success("Incremented quantity in cart!");
-            }
-          } else {
-            toast.error(result.message || "Failed to add to cart");
-          }
+    if (!token) {
+      toast.error("Please log in first to add items to your cart");
+      return;
+    }
+    try {
+      const response = await fetch(`${API_URL}/cart/${productId}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
         }
-      } catch (error) {
-        toast.error("Failed to add to cart");
-      }
-    } else {
-      const existing = cart.find((item) => item.id === productId);
-      if (existing) {
-        setCart(
-          cart.map((item) =>
-            item.id === productId ? { ...item, qty: item.qty + 1, quantity: item.qty + 1 } : item
-          )
-        );
+      });
+      const result = await response.json();
+      if (response.ok && result.status === "success") {
+        const rawData = result.data?.items || result.data || [];
+        setCart(normalizeCart(rawData));
+        toast.success("Added to cart!");
       } else {
-        const normalized = {
-          id: productId,
-          productId: productId,
-          name: product.name || product.title,
-          price: product.price,
-          image: product.image || product.images?.[0]?.url || "",
-          qty: 1,
-          quantity: 1
-        };
-        setCart([...cart, normalized]);
+        if (result.message && result.message.includes("already in your cart")) {
+          const existingItem = cart.find(item => item.id === productId);
+          if (existingItem) {
+            const newQty = Math.min((existingItem.qty || existingItem.quantity) + 1, 5);
+            updateCartQty(productId, newQty);
+            toast.success("Incremented quantity in cart!");
+          }
+        } else {
+          toast.error(result.message || "Failed to add to cart");
+        }
       }
-      toast.success("Added to cart!");
+    } catch (error) {
+      toast.error("Failed to add to cart");
     }
   };
 
@@ -1717,41 +1698,32 @@ const CartProvider = ({ children }) => {
   };
 
   const toggleWishlist = async (productId) => {
-    if (token) {
-      const isAdded = wishlist.some((item) => (item.id === productId || item === productId || item._id === productId));
-      try {
-        const url = `${API_URL}/wishlist/${productId}`;
-        const method = isAdded ? "DELETE" : "POST";
-        const response = await fetch(url, {
-          method,
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        const result = await response.json();
-        if (response.ok && result.status === "success") {
-          const rawWishData = result.data?.products || result.data || [];
-          setWishlist(normalizeWishlist(rawWishData));
-          if (isAdded) {
-            toast.info("Removed from Wishlist");
-          } else {
-            toast.success("Added to Wishlist");
-          }
-        } else {
-          toast.error(result.message || "Failed to update wishlist");
-        }
-      } catch (error) {
-        toast.error("Failed to update wishlist");
-      }
-    } else {
-      setWishlist((prev) => {
-        const isAdded = prev.includes(productId);
+    if (!token) {
+      toast.error("Please log in first to add items to your wishlist");
+      return;
+    }
+    const isAdded = wishlist.some((item) => (item.id === productId || item === productId || item._id === productId));
+    try {
+      const url = `${API_URL}/wishlist/${productId}`;
+      const method = isAdded ? "DELETE" : "POST";
+      const response = await fetch(url, {
+        method,
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const result = await response.json();
+      if (response.ok && result.status === "success") {
+        const rawWishData = result.data?.products || result.data || [];
+        setWishlist(normalizeWishlist(rawWishData));
         if (isAdded) {
           toast.info("Removed from Wishlist");
-          return prev.filter((id) => id !== productId);
         } else {
           toast.success("Added to Wishlist");
-          return [...prev, productId];
         }
-      });
+      } else {
+        toast.error(result.message || "Failed to update wishlist");
+      }
+    } catch (error) {
+      toast.error("Failed to update wishlist");
     }
   };
 

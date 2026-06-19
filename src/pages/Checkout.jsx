@@ -550,23 +550,23 @@ const CheckoutForm = () => {
   const grandTotal = finalPrice + shipping;
 
   return (
-    <div className="min-h-screen bg-[#0b1329]">
+    <div className="min-h-screen flex flex-col" style={{ background: '#FAFAF8', color: '#2C2416' }}>
       <Navbar />
 
-      <div className="max-w-7xl mx-auto p-6 py-12">
-        <h1 className="text-3xl font-black text-white tracking-tight mb-8 text-left">
+      <main className="flex-grow max-w-7xl mx-auto p-6 py-12 w-full">
+        <h1 className="text-3xl font-black tracking-tight mb-8 text-left" style={{ color: '#2C2416' }}>
           Checkout
         </h1>
 
         <div className="grid lg:grid-cols-3 gap-10 items-start">
           {/* LEFT - FORM CONTAINER CARD */}
-          <div className="lg:col-span-2 bg-white border border-slate-100 p-6 sm:p-8 rounded-2xl shadow-md">
-            <h2 className="text-xl font-bold text-slate-800 mb-6 text-left">
+          <div className="lg:col-span-2 p-6 sm:p-8 rounded-2xl shadow-sm" style={{ background: '#FFFFFF', border: '1px solid #EDE5D8' }}>
+            <h2 className="text-xl font-bold mb-6 text-left" style={{ color: '#2C2416' }}>
               Shipping Information
             </h2>
 
             <form onSubmit={handleOrder} className="space-y-5">
-              <div className="flex flex-col text-left [&_input]:bg-slate-50 [&_input]:text-slate-900 [&_input]:border-slate-200 [&_input]:placeholder-slate-400">
+              <div className="flex flex-col text-left">
                 <Input
                   type="text"
                   label="Full Address"
@@ -581,7 +581,7 @@ const CheckoutForm = () => {
               <div className="grid sm:grid-cols-2 gap-5 items-end">
                 {/* SEARCHABLE CITY SELECTION CONTAINER */}
                 <div className="flex flex-col items-start w-full relative text-left" ref={dropdownRef}>
-                  <label className="text-xs font-bold text-slate-400 mb-2 uppercase tracking-wider">
+                  <label className="text-xs font-bold mb-2 uppercase tracking-wider" style={{ color: '#A08B70' }}>
                     City
                   </label>
 
@@ -597,31 +597,39 @@ const CheckoutForm = () => {
 
                   <div
                     onClick={() => !submitting && setIsDropdownOpen(!isDropdownOpen)}
-                    className={`w-full border-2 border-slate-300 focus-within:border-purple-600 rounded-xl px-4 py-3 text-sm bg-slate-50 text-slate-900 flex justify-between items-center cursor-pointer h-[46px] shadow-sm hover:bg-slate-100/70 transition-all ${submitting ? "opacity-60 cursor-not-allowed" : ""}`}
+                    className={`w-full border rounded-xl px-4 py-3 text-sm flex justify-between items-center cursor-pointer h-[46px] shadow-sm transition-all ${
+                      submitting ? "opacity-60 cursor-not-allowed" : "hover:bg-[#FAF7F2]"
+                    }`}
+                    style={{
+                      background: '#FFFFFF',
+                      borderColor: isDropdownOpen ? '#8B6914' : '#EDE5D8',
+                      color: city ? '#2C2416' : '#A08B70'
+                    }}
                   >
-                    <span className={city ? "text-slate-900 font-bold" : "text-slate-400 font-medium"}>
+                    <span className={city ? "font-bold" : "font-medium"}>
                       {city || "Search or choose city"}
                     </span>
-                    <svg className={`w-4 h-4 text-slate-600 transition-transform ${isDropdownOpen ? "rotate-180" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg className="w-4 h-4 transition-transform duration-200" style={{ color: '#8B6914', transform: isDropdownOpen ? 'rotate(180deg)' : 'rotate(0deg)' }} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
                     </svg>
                   </div>
 
                   {isDropdownOpen && (
-                    <div className="absolute top-[76px] left-0 w-full bg-white border border-slate-300 rounded-xl shadow-2xl z-50 overflow-hidden border-t-2">
-                      <div className="p-2 border-b border-slate-200 bg-slate-100">
+                    <div className="absolute top-[76px] left-0 w-full bg-white border rounded-xl shadow-2xl z-50 overflow-hidden border-t-2" style={{ borderColor: '#EDE5D8' }}>
+                      <div className="p-2 border-b bg-[#FAF7F2]" style={{ borderColor: '#EDE5D8' }}>
                         <input
                           type="text"
                           placeholder="Type city name to search..."
                           value={searchQuery}
                           onChange={(e) => setSearchQuery(e.target.value)}
                           onClick={(e) => e.stopPropagation()}
-                          className="w-full bg-white border-2 border-purple-300 text-slate-900 placeholder-slate-400 rounded-lg px-3 py-2 text-xs outline-none focus:border-purple-600 font-bold"
+                          className="w-full bg-white border text-sm placeholder-slate-400 rounded-lg px-3 py-2 outline-none font-semibold"
+                          style={{ borderColor: '#EDE5D8', color: '#2C2416' }}
                           autoFocus
                         />
                       </div>
 
-                      <ul className="max-h-48 overflow-y-auto text-left text-xs font-bold text-slate-800 divide-y divide-slate-100">
+                      <ul className="max-h-48 overflow-y-auto text-left text-xs font-bold divide-y" style={{ borderColor: '#EDE5D8', color: '#2C2416' }}>
                         {filteredCities.length > 0 ? (
                           filteredCities.map((cityName) => (
                             <li
@@ -631,13 +639,17 @@ const CheckoutForm = () => {
                                 setSearchQuery("");
                                 setIsDropdownOpen(false);
                               }}
-                              className={`px-4 py-2.5 hover:bg-purple-600 hover:text-white cursor-pointer transition-colors ${city === cityName ? "bg-purple-100 text-purple-900" : ""}`}
+                              className="px-4 py-2.5 hover:bg-[#8B6914] hover:text-white cursor-pointer transition-colors"
+                              style={{
+                                background: city === cityName ? '#FAF7F2' : '#FFFFFF',
+                                color: city === cityName ? '#8B6914' : '#2C2416'
+                              }}
                             >
                               {cityName}
                             </li>
                           ))
                         ) : (
-                          <li className="px-4 py-3 text-slate-400 text-center font-medium bg-white">
+                          <li className="px-4 py-3 text-center font-medium bg-white" style={{ color: '#A08B70' }}>
                             No matching cities found
                           </li>
                         )}
@@ -647,7 +659,7 @@ const CheckoutForm = () => {
                 </div>
 
                 {/* PHONE NUMBER */}
-                <div className="flex flex-col text-left w-full [&_input]:bg-slate-50 [&_input]:text-slate-900 [&_input]:border-slate-200 [&_input]:placeholder-slate-400">
+                <div className="flex flex-col text-left w-full">
                   <Input
                     type="text"
                     label="Phone Number"
@@ -662,19 +674,19 @@ const CheckoutForm = () => {
 
               {/* CARD DETAILS ELEMENT */}
               <div className="flex flex-col text-left w-full mt-6">
-                <label className="text-xs font-bold text-slate-400 mb-2 uppercase tracking-wider">
+                <label className="text-xs font-bold mb-2 uppercase tracking-wider" style={{ color: '#A08B70' }}>
                   Card Details
                 </label>
-                <div className="w-full border-2 border-slate-300 rounded-xl px-4 py-3 bg-slate-50 shadow-sm focus-within:border-purple-600 transition-all">
+                <div className="w-full border rounded-xl px-4 py-3 shadow-sm focus-within:border-[#8B6914] transition-all" style={{ background: '#FFFFFF', borderColor: '#EDE5D8' }}>
                   <CardElement
                     options={{
                       style: {
                         base: {
                           fontSize: "14px",
-                          color: "#0f172a",
+                          color: "#2C2416",
                           fontFamily: "Inter, sans-serif",
                           "::placeholder": {
-                            color: "#94a3b8",
+                            color: "#A08B70",
                           },
                         },
                         invalid: {
@@ -690,7 +702,7 @@ const CheckoutForm = () => {
                 <Button
                   type="submit"
                   variant="primary"
-                  className="w-full py-3 text-sm tracking-wider uppercase font-bold bg-purple-600 hover:bg-purple-700 text-white shadow-md rounded-xl transition-colors"
+                  className="w-full py-3 text-sm tracking-wider uppercase font-bold"
                   disabled={submitting || cart.length === 0}
                 >
                   {submitting ? "Processing Payment..." : "Pay and Place Order"}
@@ -700,62 +712,63 @@ const CheckoutForm = () => {
           </div>
 
           {/* RIGHT - SUMMARY SIDE CONTAINER PANEL */}
-          <div className="bg-white border border-slate-100 p-6 rounded-2xl shadow-md">
-            <h2 className="text-xl font-bold text-slate-800 mb-6 text-left">
+          <div className="p-6 rounded-2xl shadow-sm" style={{ background: '#FFFFFF', border: '1px solid #EDE5D8' }}>
+            <h2 className="text-xl font-bold mb-6 text-left" style={{ color: '#2C2416' }}>
               Order Summary
             </h2>
 
             {cart.length === 0 ? (
-              <p className="text-slate-400 text-sm font-medium text-left">No items in your cart.</p>
+              <p className="text-sm font-medium text-left" style={{ color: '#A08B70' }}>No items in your cart.</p>
             ) : (
               <>
                 <div className="space-y-4 max-h-60 overflow-y-auto pr-1">
                   {cart.map((item) => (
                     <div
                       key={item.id}
-                      className="flex justify-between items-center text-sm font-semibold text-slate-600"
+                      className="flex justify-between items-center text-sm font-semibold"
+                      style={{ color: '#7A6A55' }}
                     >
                       <div className="text-left">
-                        <p className="text-slate-800 font-bold">{item.name}</p>
-                        <p className="text-xs text-slate-400">Qty: {item.qty}</p>
+                        <p className="font-bold" style={{ color: '#2C2416' }}>{item.name}</p>
+                        <p className="text-xs" style={{ color: '#A08B70' }}>Qty: {item.qty}</p>
                       </div>
-                      <p className="text-slate-800">${item.price * item.qty}</p>
+                      <p className="font-bold" style={{ color: '#2C2416' }}>${item.price * item.qty}</p>
                     </div>
                   ))}
                 </div>
 
-                <hr className="border-slate-200 my-4" />
+                <hr className="my-4" style={{ borderColor: '#EDE5D8' }} />
 
-                <div className="space-y-3 text-sm text-slate-500 font-semibold">
+                <div className="space-y-3 text-sm font-semibold" style={{ color: '#7A6A55' }}>
                   <div className="flex justify-between">
                     <span>Subtotal</span>
-                    <span className="text-slate-800">${totalPrice}</span>
+                    <span style={{ color: '#2C2416' }}>${totalPrice}</span>
                   </div>
                   {discountAmount > 0 && (
-                    <div className="flex justify-between text-green-600 font-bold">
+                    <div className="flex justify-between text-emerald-600 font-bold">
                       <span>Discount</span>
                       <span>-${discountAmount.toFixed(2)}</span>
                     </div>
                   )}
                   <div className="flex justify-between">
                     <span>Shipping</span>
-                    <span className="text-slate-800">${shipping}</span>
+                    <span style={{ color: '#2C2416' }}>${shipping}</span>
                   </div>
                   <div className="flex justify-between">
                     <span>Tax (included)</span>
-                    <span className="text-slate-800">$0.00</span>
+                    <span style={{ color: '#2C2416' }}>$0.00</span>
                   </div>
-                  <hr className="border-slate-200 my-2" />
-                  <div className="flex justify-between text-base font-bold text-slate-800">
+                  <hr className="my-2" style={{ borderColor: '#EDE5D8' }} />
+                  <div className="flex justify-between text-base font-bold" style={{ color: '#2C2416' }}>
                     <span>Grand Total</span>
-                    <span className="text-purple-600 font-black">${grandTotal}</span>
+                    <span className="font-black" style={{ color: '#8B6914' }}>${grandTotal}</span>
                   </div>
                 </div>
               </>
             )}
           </div>
         </div>
-      </div>
+      </main>
     </div>
   );
 };

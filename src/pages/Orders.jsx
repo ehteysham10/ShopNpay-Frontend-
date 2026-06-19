@@ -77,12 +77,12 @@ const Orders = () => {
 
   if (!token) {
     return (
-      <div className="min-h-screen bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 flex flex-col">
+      <div className="min-h-screen flex flex-col" style={{ background: '#FAFAF8', color: '#2C2416' }}>
         <Navbar />
         <div className="flex-grow flex flex-col items-center justify-center p-6 text-center">
-          <div className="max-w-md bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-800/80 p-8 rounded-3xl shadow-xl">
-            <div className="w-16 h-16 bg-purple-500/10 dark:bg-purple-500/20 rounded-full flex items-center justify-center mx-auto mb-6 border border-purple-500/20">
-              <svg className="w-8 h-8 text-purple-600 dark:text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <div className="max-w-md p-8 rounded-3xl shadow-xl" style={{ background: '#FFFFFF', border: '1px solid #EDE5D8' }}>
+            <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6" style={{ background: '#FEF3C7', border: '1px solid #FDE68A' }}>
+              <svg className="w-8 h-8" style={{ color: '#8B6914' }} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
               </svg>
             </div>
@@ -102,17 +102,17 @@ const Orders = () => {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 flex flex-col transition-colors duration-300">
+    <div className="min-h-screen flex flex-col" style={{ background: '#FAFAF8', color: '#2C2416' }}>
       <Navbar />
 
       <main className="flex-grow max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
         {/* PAGE HEADER */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
           <div className="text-left">
-            <h1 className="text-2xl sm:text-3xl font-black tracking-tight">
+            <h1 className="text-2xl sm:text-3xl font-black tracking-tight" style={{ color: '#2C2416' }}>
               My Orders
             </h1>
-            <p className="text-sm text-slate-500 dark:text-slate-400 mt-1 font-medium">
+            <p className="text-sm mt-1 font-medium" style={{ color: '#A08B70' }}>
               Track active shipments and view past transaction invoices
             </p>
           </div>
@@ -126,23 +126,23 @@ const Orders = () => {
         {/* CONTENT */}
         {loading ? (
           <div className="flex flex-col items-center justify-center py-20">
-            <div className="w-12 h-12 border-4 border-purple-500 border-t-transparent rounded-full animate-spin"></div>
-            <p className="text-slate-400 dark:text-slate-500 mt-4 font-bold text-sm">Loading your orders...</p>
+            <div className="w-12 h-12 border-4 border-t-transparent rounded-full animate-spin" style={{ borderColor: '#8B6914', borderTopColor: 'transparent' }}></div>
+            <p className="mt-4 font-bold text-sm" style={{ color: '#A08B70' }}>Loading your orders...</p>
           </div>
         ) : error ? (
-          <div className="text-center py-12 bg-white dark:bg-slate-800/40 border border-slate-100 dark:border-slate-800 rounded-3xl p-8 max-w-xl mx-auto shadow-sm">
+          <div className="text-center py-12 rounded-3xl p-8 max-w-xl mx-auto shadow-sm" style={{ background: '#FFFFFF', border: '1px solid #EDE5D8' }}>
             <p className="text-red-500 font-bold">{error}</p>
             <Button variant="outline" className="mt-4" onClick={() => window.location.reload()}>
               Try Again
             </Button>
           </div>
         ) : ordersList.length === 0 ? (
-          <div className="text-center py-20 bg-white dark:bg-slate-800/20 border border-slate-100 dark:border-slate-800 rounded-3xl p-8 max-w-xl mx-auto shadow-sm">
-            <svg className="w-16 h-16 text-slate-350 dark:text-slate-650 mx-auto mb-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <div className="text-center py-20 rounded-3xl p-8 max-w-xl mx-auto shadow-sm" style={{ background: '#FFFFFF', border: '1px solid #EDE5D8' }}>
+            <svg className="w-16 h-16 mx-auto mb-5" style={{ color: '#C4A882' }} fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
             </svg>
-            <h3 className="text-lg font-bold">No orders placed yet</h3>
-            <p className="text-slate-400 dark:text-slate-500 mt-2 text-sm font-medium max-w-xs mx-auto">
+            <h3 className="text-lg font-bold" style={{ color: '#2C2416' }}>No orders placed yet</h3>
+            <p className="mt-2 text-sm font-medium max-w-xs mx-auto" style={{ color: '#A08B70' }}>
               Once you checkout and complete your payment, your orders will show up here.
             </p>
             <Link to="/" className="mt-6 inline-block">
@@ -156,26 +156,27 @@ const Orders = () => {
             {ordersList.map((order) => (
               <div
                 key={order._id}
-                className="bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-800/80 rounded-2xl shadow-sm overflow-hidden text-left"
+                className="rounded-2xl shadow-sm overflow-hidden text-left"
+                style={{ background: '#FFFFFF', border: '1px solid #EDE5D8' }}
               >
                 {/* ORDER HEADER */}
-                <div className="bg-slate-50 dark:bg-slate-800/80 px-6 py-4 border-b border-slate-100 dark:border-slate-800 flex flex-col md:flex-row md:justify-between md:items-center gap-4 text-xs font-semibold text-slate-500 dark:text-slate-400">
+                <div className="px-6 py-4 flex flex-col md:flex-row md:justify-between md:items-center gap-4 text-xs font-semibold" style={{ background: '#FAF7F2', borderBottom: '1px solid #EDE5D8', color: '#7A6A55' }}>
                   <div className="grid grid-cols-2 md:flex md:gap-8 gap-y-2">
                     <div>
-                      <p className="text-[10px] uppercase font-bold tracking-wider text-slate-400">Order Placed</p>
-                      <p className="text-slate-800 dark:text-slate-200 mt-0.5 font-bold">
+                      <p className="text-[10px] uppercase font-bold tracking-wider" style={{ color: '#A08B70' }}>Order Placed</p>
+                      <p className="mt-0.5 font-bold" style={{ color: '#2C2416' }}>
                         {new Date(order.createdAt).toLocaleDateString(undefined, { year: "numeric", month: "long", day: "numeric" })}
                       </p>
                     </div>
                     <div>
-                      <p className="text-[10px] uppercase font-bold tracking-wider text-slate-400">Total Price</p>
-                      <p className="text-slate-800 dark:text-slate-200 mt-0.5 font-extrabold text-sm sm:text-base">
+                      <p className="text-[10px] uppercase font-bold tracking-wider" style={{ color: '#A08B70' }}>Total Price</p>
+                      <p className="mt-0.5 font-extrabold text-sm sm:text-base" style={{ color: '#2C2416' }}>
                         ${order.totalPrice || order.totalAmount}
                       </p>
                     </div>
                     <div>
-                      <p className="text-[10px] uppercase font-bold tracking-wider text-slate-400">Ship To</p>
-                      <p className="text-slate-800 dark:text-slate-200 mt-0.5 font-bold truncate max-w-[150px]">
+                      <p className="text-[10px] uppercase font-bold tracking-wider" style={{ color: '#A08B70' }}>Ship To</p>
+                      <p className="mt-0.5 font-bold truncate max-w-[150px]" style={{ color: '#2C2416' }}>
                         {order.shippingInfo?.city || "Customer Address"}
                       </p>
                     </div>
@@ -192,7 +193,7 @@ const Orders = () => {
                 </div>
 
                 {/* ORDER DETAILS & PRODUCTS */}
-                <div className="p-6 divide-y divide-slate-100 dark:divide-slate-800">
+                  <div className="p-6 divide-y" style={{ divideColor: '#EDE5D8' }}>
                   {/* PRODUCT ROWS */}
                   <div className="pb-4 space-y-4">
                     {(order.orderItems || order.items || []).map((item, index) => {
@@ -201,7 +202,7 @@ const Orders = () => {
                       return (
                         <div key={index} className="flex items-center justify-between gap-4 py-1">
                           <div className="flex items-center gap-4">
-                            <div className="w-16 h-16 bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800/80 rounded-xl overflow-hidden flex-shrink-0 flex items-center justify-center p-1">
+                            <div className="w-16 h-16 rounded-xl overflow-hidden flex-shrink-0 flex items-center justify-center p-1" style={{ background: '#FAF7F2', border: '1px solid #EDE5D8' }}>
                               {image ? (
                                 <img
                                   src={image}
@@ -221,7 +222,7 @@ const Orders = () => {
                               </p>
                             </div>
                           </div>
-                          <p className="font-extrabold text-slate-800 dark:text-slate-100 text-sm sm:text-base">
+                          <p className="font-extrabold text-sm sm:text-base" style={{ color: '#2C2416' }}>
                             ${(item.price * (item.quantity || item.qty))}
                           </p>
                         </div>
@@ -230,23 +231,23 @@ const Orders = () => {
                   </div>
 
                   {/* SHIPPING SUMMARY SECTION */}
-                  <div className="pt-4 grid sm:grid-cols-2 gap-4 text-xs font-semibold text-slate-500 dark:text-slate-400">
-                    <div>
-                      <p className="text-[10px] uppercase font-bold tracking-wider text-slate-400">Delivery Destination</p>
-                      <p className="text-slate-700 dark:text-slate-300 mt-1 font-medium leading-relaxed">
+                    <div className="pt-4 grid sm:grid-cols-2 gap-4 text-xs font-semibold" style={{ color: '#7A6A55' }}>
+                      <div>
+                        <p className="text-[10px] uppercase font-bold tracking-wider" style={{ color: '#A08B70' }}>Delivery Destination</p>
+                        <p className="mt-1 font-medium leading-relaxed" style={{ color: '#4A3D2C' }}>
                         {order.shippingInfo?.fullAddress || order.shippingAddress}<br />
                         {order.shippingInfo?.city || order.city}
                       </p>
                     </div>
-                    <div>
-                      <p className="text-[10px] uppercase font-bold tracking-wider text-slate-400">Contact Number</p>
-                      <p className="text-slate-700 dark:text-slate-300 mt-1 font-mono font-medium">
-                        {order.shippingInfo?.phone || order.phone}
-                      </p>
-                      <p className="text-[9px] text-slate-400 mt-2">
-                        Tracking Reference: <span className="font-mono text-purple-600 dark:text-purple-400">{order.orderId || order._id}</span>
-                      </p>
-                    </div>
+                      <div>
+                        <p className="text-[10px] uppercase font-bold tracking-wider" style={{ color: '#A08B70' }}>Contact Number</p>
+                        <p className="mt-1 font-mono font-medium" style={{ color: '#4A3D2C' }}>
+                          {order.shippingInfo?.phone || order.phone}
+                        </p>
+                        <p className="text-[9px] mt-2" style={{ color: '#A08B70' }}>
+                          Tracking Reference: <span className="font-mono" style={{ color: '#8B6914' }}>{order.orderId || order._id}</span>
+                        </p>
+                      </div>
                   </div>
                 </div>
               </div>

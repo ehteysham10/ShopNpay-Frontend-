@@ -1,528 +1,315 @@
-
-
-// // import { useContext } from "react";
-// // import { Link } from "react-router-dom";
-// // import { CartContext } from "../context/CartContext";
-
-// // const Navbar = () => {
-// //   const { cart, wishlist } = useContext(CartContext);
-
-// //   const cartCount = cart.reduce((total, item) => total + item.quantity, 0);
-
-// //   return (
-// //     <nav className="w-full bg-[#0b1329] text-white border-b border-slate-800/50 sticky top-0 z-40">
-// //       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-// //         <div className="flex justify-between h-16 items-center">
-
-// //           {/* LOGO */}
-// //           <div className="flex items-center">
-// //             <Link to="/" className="text-xl font-black tracking-tight text-blue-400 flex items-center gap-1">
-// //               ShopNpay <span className="w-2 h-2 rounded-full bg-purple-500 inline-block"></span>
-// //             </Link>
-// //           </div>
-
-// //           {/* RIGHT NAVIGATION LINKS (MATCHING IMAGE_5D6D45.PNG EXACTLY) */}
-// //           <div className="flex items-center gap-6 text-sm font-medium text-slate-300">
-// //             <Link to="/" className="text-blue-400 border-b-2 border-blue-400 py-1">
-// //               Home
-// //             </Link>
-
-// //             <Link to="/wishlist" className="hover:text-white transition-colors">
-// //               Wishlist
-// //             </Link>
-
-// //             <Link to="/cart" className="hover:text-white transition-colors flex items-center gap-1.5">
-// //               Cart
-// //               <span className="bg-blue-600 text-white font-bold text-xs px-2 py-0.5 rounded-full">
-// //                 {cartCount || 1}
-// //               </span>
-// //             </Link>
-
-// //             <Link to="/checkout" className="hover:text-white transition-colors">
-// //               Checkout
-// //             </Link>
-
-// //             {/* ADMIN HIDDEN FROM HERE */}
-
-// //             <Link to="/login" className="bg-white text-slate-900 font-semibold px-4 py-1.5 rounded-md hover:bg-slate-100 transition-colors ml-2">
-// //               Login
-// //             </Link>
-
-// //             {/* THEME TOGGLE ICON */}
-// //             <button className="text-slate-400 hover:text-white p-1 ml-1 cursor-pointer">
-// //               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-// //                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707M16.243 17.657l.707.707M6.343 6.343l.707-.707M14 12a2 2 0 11-4 0 2 2 0 014 0z" />
-// //               </svg>
-// //             </button>
-// //           </div>
-
-// //         </div>
-// //       </div>
-// //     </nav>
-// //   );
-// // };
-
-// // export default Navbar;
-
-
-
-// import { useContext, useState } from "react";
-// import { Link } from "react-router-dom";
-// import { CartContext } from "../context/CartContext";
-
-// const Navbar = () => {
-//   const { cart, user, logout } = useContext(CartContext);
-//   const [isOpen, setIsOpen] = useState(false);
-//   const [showUserDropdown, setShowUserDropdown] = useState(false);
-
-//   const cartCount = cart.reduce((total, item) => total + item.quantity, 0);
-
-//   return (
-//     <nav className="w-full bg-[#0b1329] text-white border-b border-slate-800/50 sticky top-0 z-40">
-//       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-//         <div className="flex justify-between h-16 items-center">
-
-//           {/* LOGO */}
-//           <div className="flex items-center">
-//             <Link to="/" className="text-xl font-black tracking-tight text-blue-400 flex items-center gap-1">
-//               ShopNpay <span className="w-2 h-2 rounded-full bg-purple-500 inline-block"></span>
-//             </Link>
-//           </div>
-
-//           {/* DESKTOP LINKS (Hidden on mobile, visible on md screens and up) */}
-//           <div className="hidden md:flex items-center gap-6 text-sm font-medium text-slate-300">
-//             <Link to="/" className="text-blue-400 border-b-2 border-blue-400 py-1">
-//               Home
-//             </Link>
-
-//             <Link to="/wishlist" className="hover:text-white transition-colors">
-//               Wishlist
-//             </Link>
-
-//             <Link to="/cart" className="hover:text-white transition-colors flex items-center gap-1.5">
-//               Cart
-//               <span className="bg-blue-600 text-white font-bold text-xs px-2 py-0.5 rounded-full">
-//                 {cartCount || 1}
-//               </span>
-//             </Link>
-
-//             <Link to="/checkout" className="hover:text-white transition-colors">
-//               Checkout
-//             </Link>
-
-//             {user && (
-//               <Link to="/orders" className="hover:text-white transition-colors">
-//                 My Orders
-//               </Link>
-//             )}
-
-//             {user ? (
-//               <div className="relative">
-//                 <button
-//                   onClick={() => setShowUserDropdown(!showUserDropdown)}
-//                   className="flex items-center gap-2 hover:text-white transition-colors focus:outline-none cursor-pointer"
-//                 >
-//                   {user.avatar ? (
-//                     <img
-//                       src={user.avatar}
-//                       alt={user.name}
-//                       className="w-8 h-8 rounded-full border border-blue-400"
-//                     />
-//                   ) : (
-//                     <div className="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-sm">
-//                       {user.name.charAt(0).toUpperCase()}
-//                     </div>
-//                   )}
-//                   <span className="hidden sm:inline text-sm">{user.name}</span>
-//                   <svg className="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-//                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
-//                   </svg>
-//                 </button>
-
-//                 {showUserDropdown && (
-//                   <div className="absolute right-0 mt-2 w-48 bg-[#111c40] border border-slate-850 rounded-xl shadow-lg py-2 z-50 text-left">
-//                     <div className="px-4 py-2 border-b border-slate-800">
-//                       <p className="text-xs text-slate-400 font-medium">Signed in as</p>
-//                       <p className="text-sm font-bold text-white truncate">{user.email}</p>
-//                     </div>
-//                     <Link
-//                       to="/orders"
-//                       onClick={() => setShowUserDropdown(false)}
-//                       className="block px-4 py-2 text-sm text-slate-300 hover:bg-slate-800 transition-colors"
-//                     >
-//                       My Orders
-//                     </Link>
-//                     {user.role === "admin" && (
-//                       <Link
-//                         to="/admin"
-//                         onClick={() => setShowUserDropdown(false)}
-//                         className="block px-4 py-2 text-sm text-blue-400 hover:bg-slate-800 transition-colors"
-//                       >
-//                         Admin Dashboard
-//                       </Link>
-//                     )}
-//                     <button
-//                       onClick={() => {
-//                         logout();
-//                         setShowUserDropdown(false);
-//                       }}
-//                       className="w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-slate-800 transition-colors cursor-pointer"
-//                     >
-//                       Logout
-//                     </button>
-//                   </div>
-//                 )}
-//               </div>
-//             ) : (
-//               <Link to="/login" className="bg-white text-slate-900 font-semibold px-4 py-1.5 rounded-md hover:bg-slate-100 transition-colors ml-2">
-//                 Login
-//               </Link>
-//             )}
-//           </div>
-
-//           {/* MOBILE BURGER BUTTON (Visible only on mobile) */}
-//           <div className="flex md:hidden">
-//             <button
-//               onClick={() => setIsOpen(!isOpen)}
-//               className="text-slate-400 hover:text-white focus:outline-none p-2"
-//             >
-//               <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-//                 {isOpen ? (
-//                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-//                 ) : (
-//                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
-//                 )}
-//               </svg>
-//             </button>
-//           </div>
-
-//         </div>
-//       </div>
-
-//       {/* MOBILE DROPDOWN LINKS PANEL */}
-//       {isOpen && (
-//         <div className="md:hidden bg-[#0f1b3a] border-t border-slate-800 px-4 pt-2 pb-4 space-y-3 text-left font-medium text-sm text-slate-300 animate-fade-in">
-//           <Link
-//             to="/"
-//             onClick={() => setIsOpen(false)}
-//             className="block text-blue-400 py-1 border-b border-slate-800"
-//           >
-//             Home
-//           </Link>
-
-//           <Link
-//             to="/wishlist"
-//             onClick={() => setIsOpen(false)}
-//             className="block hover:text-white py-1 border-b border-slate-800"
-//           >
-//             Wishlist
-//           </Link>
-
-//           <Link
-//             to="/cart"
-//             onClick={() => setIsOpen(false)}
-//             className="flex items-center justify-between hover:text-white py-1 border-b border-slate-800"
-//           >
-//             <span>Cart</span>
-//             <span className="bg-blue-600 text-white font-bold text-xs px-2 py-0.5 rounded-full">
-//               {cartCount || 1}
-//             </span>
-//           </Link>
-
-//           <Link
-//             to="/checkout"
-//             onClick={() => setIsOpen(false)}
-//             className="block hover:text-white py-1 border-b border-slate-800"
-//           >
-//             Checkout
-//           </Link>
-
-//           {user && (
-//             <Link
-//               to="/orders"
-//               onClick={() => setIsOpen(false)}
-//               className="block hover:text-white py-1 border-b border-slate-800"
-//             >
-//               My Orders
-//             </Link>
-//           )}
-
-//           {user ? (
-//             <div className="pt-2 border-t border-slate-800 mt-2 space-y-2">
-//               <div className="flex items-center gap-3 px-1 py-2">
-//                 {user.avatar ? (
-//                   <img src={user.avatar} alt={user.name} className="w-10 h-10 rounded-full border border-blue-400" />
-//                 ) : (
-//                   <div className="w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold">
-//                     {user.name.charAt(0).toUpperCase()}
-//                   </div>
-//                 )}
-//                 <div>
-//                   <p className="text-sm font-bold text-white">{user.name}</p>
-//                   <p className="text-xs text-slate-400 truncate">{user.email}</p>
-//                 </div>
-//               </div>
-
-//               {user.role === "admin" && (
-//                 <Link
-//                   to="/admin"
-//                   onClick={() => setIsOpen(false)}
-//                   className="block text-center bg-blue-600/20 text-blue-400 font-bold px-4 py-2 rounded-xl border border-blue-500/20 hover:bg-blue-600/30 transition-colors"
-//                 >
-//                   Admin Dashboard
-//                 </Link>
-//               )}
-
-//               <button
-//                 onClick={() => {
-//                   logout();
-//                   setIsOpen(false);
-//                 }}
-//                 className="w-full text-center bg-red-650/10 text-red-400 font-bold px-4 py-2 rounded-xl border border-red-500/20 hover:bg-red-600/20 transition-colors cursor-pointer"
-//               >
-//                 Logout
-//               </button>
-//             </div>
-//           ) : (
-//             <div className="pt-2">
-//               <Link
-//                 to="/login"
-//                 onClick={() => setIsOpen(false)}
-//                 className="block text-center bg-white text-slate-900 font-bold px-4 py-2 rounded-xl hover:bg-slate-100 transition-colors"
-//               >
-//                 Login
-//               </Link>
-//             </div>
-//           )}
-//         </div>
-//       )}
-//     </nav>
-//   );
-// };
-
-// export default Navbar; 
-
-
-
-
-
-
-
-
-
-
 import { useContext, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { CartContext } from "../context/CartContext";
+
+// ── Colour tokens ──────────────────────────────────────────────
+const C = {
+  nav:        '#FDFCFB',
+  border:     '#EDE5D8',
+  text:       '#2C2416',
+  textMuted:  '#7A6A55',
+  textSubtle: '#A08B70',
+  accent:     '#8B6914',
+  accentBg:   '#FDF8EE',
+  surface:    'rgba(255,255,255,0.95)',
+  dropdown:   '#FFFFFF',
+};
 
 const Navbar = () => {
   const { cart, user, logout } = useContext(CartContext);
   const [isOpen, setIsOpen] = useState(false);
   const [showUserDropdown, setShowUserDropdown] = useState(false);
+  const location = useLocation();
+  const currentPath = location.pathname;
 
-  // Aligned with item.qty from Cart component
   const cartCount = cart.reduce((total, item) => total + (item.qty || item.quantity || 0), 0);
 
+  const getLinkStyle = (path) => {
+    const isActive = currentPath === path;
+    return {
+      color: isActive ? C.accent : C.textMuted,
+      borderColor: isActive ? C.accent : 'transparent'
+    };
+  };
+
   return (
-    <nav className="w-full bg-[#0b1329] text-white border-b border-slate-800/50 sticky top-0 z-40">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16 items-center">
+    <div className="w-full sticky top-0 z-45 px-4 sm:px-6 lg:px-8 pt-4 pb-2" style={{ background: 'transparent' }}>
+      <nav
+        className="max-w-7xl mx-auto rounded-2xl border backdrop-blur-md transition-all duration-300"
+        style={{
+          background: 'rgba(253, 252, 251, 0.75)',
+          borderColor: 'rgba(237, 229, 216, 0.7)',
+          boxShadow: '0 8px 32px rgba(139, 107, 68, 0.08)',
+        }}
+      >
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between h-16 items-center">
 
-          {/* LOGO */}
-          <div className="flex items-center">
-            <Link to="/" className="text-xl font-black tracking-tight text-blue-400 flex items-center gap-1">
-              ShopNpay <span className="w-2 h-2 rounded-full bg-purple-500 inline-block"></span>
-            </Link>
+            {/* LOGO */}
+            <div className="flex items-center">
+              <Link
+                to="/"
+                className="text-xl font-black tracking-tight flex items-center gap-2"
+                style={{ color: C.accent }}
+              >
+                ShopNpay
+                <span
+                  className="w-2 h-2 rounded-full inline-block"
+                  style={{ background: 'linear-gradient(135deg, #C4954A, #8B6914)' }}
+                />
+              </Link>
+            </div>
+
+            {/* DESKTOP LINKS */}
+            <div className="hidden md:flex items-center gap-6 text-sm font-semibold">
+              <Link
+                to="/"
+                className="border-b-2 py-1 transition-all"
+                style={getLinkStyle("/")}
+              >
+                Home
+              </Link>
+
+              <Link
+                to="/wishlist"
+                className="border-b-2 py-1 transition-all"
+                style={getLinkStyle("/wishlist")}
+              >
+                Wishlist
+              </Link>
+
+              <Link
+                to="/cart"
+                className="border-b-2 py-1 transition-all flex items-center gap-1.5"
+                style={getLinkStyle("/cart")}
+              >
+                Cart
+                {cartCount > 0 && (
+                  <span
+                    className="font-bold text-xs px-2 py-0.5 rounded-full text-white"
+                    style={{ background: C.accent }}
+                  >
+                    {cartCount}
+                  </span>
+                )}
+              </Link>
+
+              <Link
+                to="/checkout"
+                className="border-b-2 py-1 transition-all"
+                style={getLinkStyle("/checkout")}
+              >
+                Checkout
+              </Link>
+
+              {user && (
+                <Link
+                  to="/orders"
+                  className="border-b-2 py-1 transition-all"
+                  style={getLinkStyle("/orders")}
+                >
+                  My Orders
+                </Link>
+              )}
+
+              {user ? (
+                <div className="relative">
+                  <button
+                    onClick={() => setShowUserDropdown(!showUserDropdown)}
+                    className="flex items-center gap-2 hover:opacity-70 transition-opacity focus:outline-none cursor-pointer"
+                  >
+                    {user.avatar ? (
+                      <img
+                        src={user.avatar}
+                        alt={user.name}
+                        className="w-8 h-8 rounded-full border-2"
+                        style={{ borderColor: C.accent }}
+                      />
+                    ) : (
+                      <div
+                        className="w-8 h-8 rounded-full text-white flex items-center justify-center font-bold text-sm"
+                        style={{ background: 'linear-gradient(135deg, #8B6914, #C4954A)' }}
+                      >
+                        {user.name ? user.name.charAt(0).toUpperCase() : "U"}
+                      </div>
+                    )}
+                    <span className="hidden sm:inline text-sm" style={{ color: C.text }}>{user.name}</span>
+                    <svg className="w-4 h-4" style={{ color: C.textSubtle }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
+
+                  {showUserDropdown && (
+                    <div
+                      className="absolute right-0 mt-2 w-52 rounded-xl shadow-xl py-2 z-50 text-left border"
+                      style={{ background: C.dropdown, borderColor: C.border, boxShadow: '0 8px 32px rgba(139,107,68,0.15)' }}
+                    >
+                      <div className="px-4 py-2.5 border-b" style={{ borderColor: C.border }}>
+                        <p className="text-[10px] font-bold uppercase tracking-wider" style={{ color: C.textSubtle }}>Signed in as</p>
+                        <p className="text-sm font-bold truncate mt-0.5" style={{ color: C.text }}>{user.email}</p>
+                      </div>
+                      <Link
+                        to="/orders"
+                        onClick={() => setShowUserDropdown(false)}
+                        className="block px-4 py-2.5 text-sm transition-colors hover:bg-stone-50"
+                        style={{ color: C.textMuted }}
+                      >
+                        My Orders
+                      </Link>
+                      {user.role === "admin" && (
+                        <Link
+                          to="/admin"
+                          onClick={() => setShowUserDropdown(false)}
+                          className="block px-4 py-2.5 text-sm font-bold transition-colors hover:bg-stone-50"
+                          style={{ color: C.accent }}
+                        >
+                          Admin Dashboard
+                        </Link>
+                      )}
+                      <button
+                        onClick={() => { logout(); setShowUserDropdown(false); }}
+                        className="w-full text-left px-4 py-2.5 text-sm text-red-500 hover:bg-red-50 transition-colors cursor-pointer font-semibold"
+                      >
+                        Logout
+                      </button>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <Link
+                  to="/login"
+                  className="font-bold px-4 py-1.5 rounded-lg transition-opacity hover:opacity-80 text-white"
+                  style={{ background: 'linear-gradient(135deg, #8B6914, #C4954A)' }}
+                >
+                  Login
+                </Link>
+              )}
+            </div>
+
+            {/* MOBILE BURGER */}
+            <div className="flex md:hidden">
+              <button
+                onClick={() => setIsOpen(!isOpen)}
+                className="focus:outline-none p-2 rounded-lg transition-colors"
+                style={{ color: C.textMuted }}
+              >
+                <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  {isOpen ? (
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                  ) : (
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
+                  )}
+                </svg>
+              </button>
+            </div>
+
           </div>
+        </div>
 
-          {/* DESKTOP LINKS */}
-          <div className="hidden md:flex items-center gap-6 text-sm font-medium text-slate-300">
-            <Link to="/" className="text-blue-400 border-b-2 border-blue-400 py-1">
+        {/* MOBILE MENU */}
+        {isOpen && (
+          <div
+            className="md:hidden border-t px-4 pt-3 pb-5 space-y-3 text-left font-semibold text-sm animate-fade-in rounded-b-2xl"
+            style={{ background: C.nav, borderColor: C.border, color: C.textMuted }}
+          >
+            <Link
+              to="/"
+              onClick={() => setIsOpen(false)}
+              className="block py-2 border-b font-bold"
+              style={{ color: currentPath === "/" ? C.accent : C.textMuted, borderColor: C.border }}
+            >
               Home
             </Link>
-
-            <Link to="/wishlist" className="hover:text-white transition-colors">
+            <Link
+              to="/wishlist"
+              onClick={() => setIsOpen(false)}
+              className="block py-2 border-b hover:opacity-70 font-semibold"
+              style={{ color: currentPath === "/wishlist" ? C.accent : C.textMuted, borderColor: C.border }}
+            >
               Wishlist
             </Link>
-
-            <Link to="/cart" className="hover:text-white transition-colors flex items-center gap-1.5">
-              Cart
-              <span className="bg-blue-600 text-white font-bold text-xs px-2 py-0.5 rounded-full">
-                {cartCount}
-              </span>
+            <Link
+              to="/cart"
+              onClick={() => setIsOpen(false)}
+              className="flex items-center justify-between py-2 border-b hover:opacity-70 font-semibold"
+              style={{ color: currentPath === "/cart" ? C.accent : C.textMuted, borderColor: C.border }}
+            >
+              <span>Cart</span>
+              {cartCount > 0 && (
+                <span className="font-bold text-xs px-2 py-0.5 rounded-full text-white" style={{ background: C.accent }}>
+                  {cartCount}
+                </span>
+              )}
             </Link>
-
-            <Link to="/checkout" className="hover:text-white transition-colors">
+            <Link
+              to="/checkout"
+              onClick={() => setIsOpen(false)}
+              className="block py-2 border-b hover:opacity-70 font-semibold"
+              style={{ color: currentPath === "/checkout" ? C.accent : C.textMuted, borderColor: C.border }}
+            >
               Checkout
             </Link>
-
             {user && (
-              <Link to="/orders" className="hover:text-white transition-colors">
+              <Link
+                to="/orders"
+                onClick={() => setIsOpen(false)}
+                className="block py-2 border-b hover:opacity-70 font-semibold"
+                style={{ color: currentPath === "/orders" ? C.accent : C.textMuted, borderColor: C.border }}
+              >
                 My Orders
               </Link>
             )}
 
             {user ? (
-              <div className="relative">
-                <button
-                  onClick={() => setShowUserDropdown(!showUserDropdown)}
-                  className="flex items-center gap-2 hover:text-white transition-colors focus:outline-none cursor-pointer"
-                >
+              <div className="pt-2 border-t space-y-2" style={{ borderColor: C.border }}>
+                <div className="flex items-center gap-3 px-1 py-2">
                   {user.avatar ? (
-                    <img
-                      src={user.avatar}
-                      alt={user.name}
-                      className="w-8 h-8 rounded-full border border-blue-400"
-                    />
+                    <img src={user.avatar} alt={user.name} className="w-10 h-10 rounded-full border-2" style={{ borderColor: C.accent }} />
                   ) : (
-                    <div className="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-sm">
+                    <div className="w-10 h-10 rounded-full text-white flex items-center justify-center font-bold" style={{ background: 'linear-gradient(135deg, #8B6914, #C4954A)' }}>
                       {user.name ? user.name.charAt(0).toUpperCase() : "U"}
                     </div>
                   )}
-                  <span className="hidden sm:inline text-sm">{user.name}</span>
-                  <svg className="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
-                  </svg>
-                </button>
-
-                {showUserDropdown && (
-                  <div className="absolute right-0 mt-2 w-48 bg-[#111c40] border border-slate-800 rounded-xl shadow-lg py-2 z-50 text-left">
-                    <div className="px-4 py-2 border-b border-slate-800">
-                      <p className="text-xs text-slate-400 font-medium">Signed in as</p>
-                      <p className="text-sm font-bold text-white truncate">{user.email}</p>
-                    </div>
-                    <Link
-                      to="/orders"
-                      onClick={() => setShowUserDropdown(false)}
-                      className="block px-4 py-2 text-sm text-slate-300 hover:bg-slate-800 transition-colors"
-                    >
-                      My Orders
-                    </Link>
-                    {user.role === "admin" && (
-                      <Link
-                        to="/admin"
-                        onClick={() => setShowUserDropdown(false)}
-                        className="block px-4 py-2 text-sm text-blue-400 hover:bg-slate-800 transition-colors"
-                      >
-                        Admin Dashboard
-                      </Link>
-                    )}
-                    <button
-                      onClick={() => {
-                        logout();
-                        setShowUserDropdown(false);
-                      }}
-                      className="w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-slate-800 transition-colors cursor-pointer"
-                    >
-                      Logout
-                    </button>
+                  <div>
+                    <p className="text-sm font-bold" style={{ color: C.text }}>{user.name}</p>
+                    <p className="text-xs truncate" style={{ color: C.textSubtle }}>{user.email}</p>
                   </div>
+                </div>
+
+                {user.role === "admin" && (
+                  <Link
+                    to="/admin"
+                    onClick={() => setIsOpen(false)}
+                    className="block text-center font-bold px-4 py-2.5 rounded-xl border transition-colors"
+                    style={{ color: C.accent, borderColor: C.border, background: C.accentBg }}
+                  >
+                    Admin Dashboard
+                  </Link>
                 )}
+
+                <button
+                  onClick={() => { logout(); setIsOpen(false); }}
+                  className="w-full text-center text-red-500 font-bold px-4 py-2.5 rounded-xl border border-red-100 hover:bg-red-50 transition-colors cursor-pointer"
+                >
+                  Logout
+                </button>
               </div>
             ) : (
-              <Link to="/login" className="bg-white text-slate-900 font-semibold px-4 py-1.5 rounded-md hover:bg-slate-100 transition-colors ml-2">
-                Login
-              </Link>
+              <div className="pt-2">
+                <Link
+                  to="/login"
+                  onClick={() => setIsOpen(false)}
+                  className="block text-center font-bold px-4 py-2.5 rounded-xl text-white transition-opacity hover:opacity-80"
+                  style={{ background: 'linear-gradient(135deg, #8B6914, #C4954A)' }}
+                >
+                  Login
+                </Link>
+              </div>
             )}
           </div>
-
-          {/* MOBILE BURGER BUTTON */}
-          <div className="flex md:hidden">
-            <button
-              onClick={() => setIsOpen(!isOpen)}
-              className="text-slate-400 hover:text-white focus:outline-none p-2"
-            >
-              <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                {isOpen ? (
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-                ) : (
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
-                )}
-              </svg>
-            </button>
-          </div>
-
-        </div>
-      </div>
-
-      {/* MOBILE DROPDOWN LINKS PANEL */}
-      {isOpen && (
-        <div className="md:hidden bg-[#0f1b3a] border-t border-slate-800 px-4 pt-2 pb-4 space-y-3 text-left font-medium text-sm text-slate-300 animate-fade-in">
-          <Link to="/" onClick={() => setIsOpen(false)} className="block text-blue-400 py-1 border-b border-slate-800">
-            Home
-          </Link>
-
-          <Link to="/wishlist" onClick={() => setIsOpen(false)} className="block hover:text-white py-1 border-b border-slate-800">
-            Wishlist
-          </Link>
-
-          <Link to="/cart" onClick={() => setIsOpen(false)} className="flex items-center justify-between hover:text-white py-1 border-b border-slate-800">
-            <span>Cart</span>
-            <span className="bg-blue-600 text-white font-bold text-xs px-2 py-0.5 rounded-full">
-              {cartCount}
-            </span>
-          </Link>
-
-          <Link to="/checkout" onClick={() => setIsOpen(false)} className="block hover:text-white py-1 border-b border-slate-800">
-            Checkout
-          </Link>
-
-          {user && (
-            <Link to="/orders" onClick={() => setIsOpen(false)} className="block hover:text-white py-1 border-b border-slate-800">
-              My Orders
-            </Link>
-          )}
-
-          {user ? (
-            <div className="pt-2 border-t border-slate-800 mt-2 space-y-2">
-              <div className="flex items-center gap-3 px-1 py-2">
-                {user.avatar ? (
-                  <img src={user.avatar} alt={user.name} className="w-10 h-10 rounded-full border border-blue-400" />
-                ) : (
-                  <div className="w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold">
-                    {user.name ? user.name.charAt(0).toUpperCase() : "U"}
-                  </div>
-                )}
-                <div>
-                  <p className="text-sm font-bold text-white">{user.name}</p>
-                  <p className="text-xs text-slate-400 truncate">{user.email}</p>
-                </div>
-              </div>
-
-              {user.role === "admin" && (
-                <Link
-                  to="/admin"
-                  onClick={() => setIsOpen(false)}
-                  className="block text-center bg-blue-600/20 text-blue-400 font-bold px-4 py-2 rounded-xl border border-blue-500/20 hover:bg-blue-600/30 transition-colors"
-                >
-                  Admin Dashboard
-                </Link>
-              )}
-
-              <button
-                onClick={() => {
-                  logout();
-                  setIsOpen(false);
-                }}
-                className="w-full text-center bg-red-650/10 text-red-400 font-bold px-4 py-2 rounded-xl border border-red-500/20 hover:bg-red-600/20 transition-colors cursor-pointer"
-              >
-                Logout
-              </button>
-            </div>
-          ) : (
-            <div className="pt-2">
-              <Link
-                to="/login"
-                onClick={() => setIsOpen(false)}
-                className="block text-center bg-white text-slate-900 font-bold px-4 py-2 rounded-xl hover:bg-slate-100 transition-colors"
-              >
-                Login
-              </Link>
-            </div>
-          )}
-        </div>
-      )}
-    </nav>
+        )}
+      </nav>
+    </div>
   );
 };
 

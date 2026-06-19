@@ -191,6 +191,10 @@ const Product = () => {
   );
 
   const handleAddToCart = () => {
+    if (!token) {
+      addToCart(product);
+      return;
+    }
     addToCart(product);
     if (!isCartOpen) toggleCart();
   };
@@ -238,7 +242,7 @@ const Product = () => {
     <>
       <Navbar />
 
-      <div className="max-w-6xl mx-auto p-4 dark:text-slate-100">
+      <div className="max-w-6xl mx-auto p-4" style={{ color: '#2C2416' }}>
         {/* PRODUCT SECTION */}
         <div className="grid md:grid-cols-2 gap-8">
           {/* IMAGES */}
@@ -246,7 +250,8 @@ const Product = () => {
             <img
               src={activeImage}
               alt={product.name}
-              className="w-full h-[400px] object-contain rounded-xl bg-slate-50 dark:bg-slate-900/40 p-4"
+              className="w-full h-[400px] object-contain rounded-xl p-4"
+              style={{ background: '#F5F0E8' }}
             />
 
             {images.length > 1 && (
@@ -257,10 +262,15 @@ const Product = () => {
                     src={img.url}
                     alt=""
                     onClick={() => setCurrentImgIndex(i)}
-                    className={`w-16 h-16 object-cover rounded-lg border cursor-pointer transition-all ${i === currentImgIndex
-                        ? "border-purple-500 scale-105 shadow-md"
-                        : "border-slate-200 dark:border-slate-700 opacity-70 hover:opacity-100"
-                      }`}
+                    className={`w-16 h-16 object-cover rounded-lg border cursor-pointer transition-all ${
+                      i === currentImgIndex
+                        ? "scale-105 shadow-md"
+                        : "opacity-70 hover:opacity-100"
+                    }`}
+                    style={i === currentImgIndex
+                      ? { borderColor: '#8B6914', borderWidth: '2px' }
+                      : { borderColor: '#EDE5D8' }
+                    }
                   />
                 ))}
               </div>
@@ -270,12 +280,15 @@ const Product = () => {
           {/* DETAILS */}
           <div className="flex flex-col justify-between py-2">
             <div>
-              <span className="text-xs font-bold text-purple-600 dark:text-purple-400 tracking-wider uppercase bg-purple-50 dark:bg-purple-950/30 px-2.5 py-1 rounded-md">
+              <span
+                className="text-xs font-bold tracking-wider uppercase px-2.5 py-1 rounded-md"
+                style={{ color: '#8B6914', background: '#FEF3C7', border: '1px solid #FDE68A' }}
+              >
                 {product.category}
               </span>
-              <h1 className="text-3xl font-black mt-3 text-slate-800 dark:text-slate-100">{product.name}</h1>
-              <p className="text-2xl font-black mt-2 text-slate-900 dark:text-slate-50">${product.price}</p>
-              <p className="mt-5 text-slate-600 dark:text-slate-300 leading-relaxed">{product.description}</p>
+              <h1 className="text-3xl font-black mt-3" style={{ color: '#2C2416' }}>{product.name}</h1>
+              <p className="text-2xl font-black mt-2" style={{ color: '#8B6914' }}>${product.price}</p>
+              <p className="mt-5 leading-relaxed" style={{ color: '#4A3D2C' }}>{product.description}</p>
             </div>
 
             <div className="mt-6 flex gap-3">
@@ -295,8 +308,8 @@ const Product = () => {
         </div>
 
         {/* CUSTOMER REVIEWS */}
-        <div className="mt-12 border-t border-slate-100 dark:border-slate-800 pt-8">
-          <h2 className="text-2xl font-extrabold text-slate-800 dark:text-slate-100">
+        <div className="mt-12 pt-8" style={{ borderTop: '1px solid #EDE5D8' }}>
+          <h2 className="text-2xl font-extrabold" style={{ color: '#2C2416' }}>
             Customer Reviews ({reviews.length})
           </h2>
 
@@ -307,14 +320,14 @@ const Product = () => {
               <p className="text-sm text-slate-400 italic">No reviews yet for this product.</p>
             ) : (
               reviews.map((r) => (
-                <div key={r._id} className="bg-slate-50 dark:bg-slate-900/40 p-4 rounded-xl border border-slate-100 dark:border-slate-800">
+                <div key={r._id} className="p-4 rounded-xl" style={{ background: '#FAF7F2', border: '1px solid #EDE5D8' }}>
                   <div className="flex justify-between items-center">
-                    <p className="font-bold text-sm text-slate-700 dark:text-slate-200">
+                    <p className="font-bold text-sm" style={{ color: '#2C2416' }}>
                       {r.user?.name || "Verified Buyer"}
                     </p>
                     <span className="text-amber-400 text-xs">{"★".repeat(r.rating || 5)}</span>
                   </div>
-                  <p className="text-slate-600 dark:text-slate-300 text-sm mt-1">{r.comment}</p>
+                  <p className="text-sm mt-1" style={{ color: '#4A3D2C' }}>{r.comment}</p>
                 </div>
               ))
             )}
@@ -323,7 +336,8 @@ const Product = () => {
           {token && (
             <form
               onSubmit={handleAddReview}
-              className="mt-6 space-y-3 bg-slate-50 dark:bg-slate-900/20 p-4 rounded-xl border border-slate-100 dark:border-slate-800"
+              className="mt-6 space-y-3 p-4 rounded-xl"
+              style={{ background: '#FAF7F2', border: '1px solid #EDE5D8' }}
             >
               <h3 className="text-sm font-bold">Write a Review</h3>
               <div>
@@ -331,7 +345,8 @@ const Product = () => {
                 <select
                   value={reviewForm.rating}
                   onChange={(e) => setReviewForm({ ...reviewForm, rating: e.target.value })}
-                  className="border dark:border-slate-700 bg-white dark:bg-slate-800 p-1.5 rounded-md text-sm"
+                  className="p-1.5 rounded-md text-sm"
+                  style={{ border: '1px solid #EDE5D8', background: '#FFFFFF', color: '#2C2416' }}
                 >
                   <option value="5">5 Stars</option>
                   <option value="4">4 Stars</option>
@@ -352,7 +367,8 @@ const Product = () => {
                   }
                   rows="3"
                   placeholder="Share your thoughts about this product..."
-                  className="border dark:border-slate-700 bg-white dark:bg-slate-800 w-full p-2.5 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  className="w-full p-2.5 rounded-lg text-sm focus:outline-none"
+                  style={{ border: '1px solid #EDE5D8', background: '#FFFFFF', color: '#2C2416' }}
                 />
               </div>
 
@@ -365,8 +381,8 @@ const Product = () => {
 
         {/* RELATED PRODUCTS */}
         {related && related.length > 0 && (
-          <div className="mt-16 border-t border-slate-100 dark:border-slate-800 pt-8">
-            <h2 className="text-2xl font-extrabold text-slate-800 dark:text-slate-100 mb-6">
+          <div className="mt-16 pt-8" style={{ borderTop: '1px solid #EDE5D8' }}>
+            <h2 className="text-2xl font-extrabold mb-6" style={{ color: '#2C2416' }}>
               Related Products
             </h2>
 

@@ -33,21 +33,21 @@ const Cart = () => {
   const grandTotal = totalPrice - discountAmount + shipping;
 
   return (
-    <>
+    <div className="min-h-screen flex flex-col" style={{ background: '#FAFAF8', color: '#2C2416' }}>
       <Navbar />
 
-      <div className="max-w-7xl mx-auto p-6 py-12">
-        <h1 className="text-3xl font-black text-slate-800 dark:text-slate-100 tracking-tight mb-8 text-left">
+      <main className="flex-grow max-w-7xl mx-auto p-6 py-12 w-full">
+        <h1 className="text-3xl font-black tracking-tight mb-8 text-left" style={{ color: '#2C2416' }}>
           Shopping Cart
         </h1>
 
         {cart.length === 0 ? (
-          <div className="text-center py-20 bg-white dark:bg-slate-800/40 border border-slate-100 dark:border-slate-800 rounded-3xl p-8 shadow-sm max-w-xl mx-auto">
-            <svg className="w-16 h-16 text-slate-300 dark:text-slate-600 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <div className="text-center py-20 rounded-3xl p-8 shadow-sm max-w-xl mx-auto" style={{ background: '#FFFFFF', border: '1px solid #EDE5D8' }}>
+            <svg className="w-16 h-16 mx-auto mb-4" style={{ color: '#C4A882' }} fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
             </svg>
-            <h2 className="text-xl font-bold text-slate-800 dark:text-slate-200">Your cart is empty</h2>
-            <p className="text-slate-400 dark:text-slate-500 mt-2 text-sm">Looks like you haven't added anything to your cart yet.</p>
+            <h2 className="text-xl font-bold" style={{ color: '#2C2416' }}>Your cart is empty</h2>
+            <p className="mt-2 text-sm" style={{ color: '#A08B70' }}>Looks like you haven't added anything to your cart yet.</p>
             <Link to="/" className="mt-6 inline-block">
               <Button variant="primary">Start Shopping</Button>
             </Link>
@@ -59,11 +59,12 @@ const Cart = () => {
               {cart.map((item) => (
                 <div
                   key={item.id}
-                  className="bg-white dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800/80 p-5 rounded-2xl flex flex-col sm:flex-row justify-between sm:items-center gap-4 hover:shadow-sm transition-all"
+                  className="bg-white border p-5 rounded-2xl flex flex-col sm:flex-row justify-between sm:items-center gap-4 hover:shadow-sm transition-all"
+                  style={{ borderColor: '#EDE5D8' }}
                 >
                   <div className="flex items-center gap-4">
                     {/* THUMBNAIL */}
-                    <div className="w-20 h-20 bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700 rounded-xl overflow-hidden flex-shrink-0 flex items-center justify-center p-1">
+                    <div className="w-20 h-20 rounded-xl overflow-hidden flex-shrink-0 flex items-center justify-center p-1" style={{ background: '#FAF7F2', border: '1px solid #EDE5D8' }}>
                       <img
                         src={item.image}
                         alt={item.name}
@@ -71,28 +72,30 @@ const Cart = () => {
                       />
                     </div>
                     <div>
-                      <h2 className="font-bold text-slate-800 dark:text-slate-100 text-base text-left">
+                      <h2 className="font-bold text-base text-left" style={{ color: '#2C2416' }}>
                         {item.name}
                       </h2>
-                      <p className="text-purple-600 dark:text-purple-400 font-extrabold text-sm text-left mt-0.5">${item.price}</p>
+                      <p className="font-extrabold text-sm text-left mt-0.5" style={{ color: '#8B6914' }}>${item.price}</p>
                     </div>
                   </div>
 
                   {/* CONTROLS */}
                   <div className="flex gap-4 items-center justify-between sm:justify-end">
-                    <div className="flex items-center border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden bg-slate-50 dark:bg-slate-900 shadow-inner">
+                    <div className="flex items-center rounded-xl overflow-hidden shadow-inner" style={{ border: '1px solid #EDE5D8', background: '#FAF7F2' }}>
                       <button
                         onClick={() => decreaseQty(item.id)}
-                        className="px-3 py-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400 font-extrabold transition-colors cursor-pointer"
+                        className="px-3 py-1.5 font-extrabold transition-colors cursor-pointer hover:opacity-70"
+                        style={{ color: '#6B5B45' }}
                       >
                         -
                       </button>
-                      <span className="px-3 text-slate-800 dark:text-slate-200 font-bold text-sm w-8 text-center">
+                      <span className="px-3 font-bold text-sm w-8 text-center" style={{ color: '#2C2416' }}>
                         {item.qty}
                       </span>
                       <button
                         onClick={() => increaseQty(item.id)}
-                        className="px-3 py-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400 font-extrabold transition-colors cursor-pointer"
+                        className="px-3 py-1.5 font-extrabold transition-colors cursor-pointer hover:opacity-70"
+                        style={{ color: '#6B5B45' }}
                       >
                         +
                       </button>
@@ -114,19 +117,19 @@ const Cart = () => {
             {/* RIGHT - SUMMARY & PROMO CARD */}
             <div className="space-y-6">
               {/* ORDER SUMMARY */}
-              <div className="bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 p-6 rounded-2xl shadow-sm">
-                <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 text-left">
+              <div className="p-6 rounded-2xl shadow-sm" style={{ background: '#FFFFFF', border: '1px solid #EDE5D8' }}>
+                <h2 className="text-xl font-bold mb-6 text-left" style={{ color: '#2C2416' }}>
                   Order Summary
                 </h2>
 
-                <div className="space-y-3 text-sm text-slate-500 dark:text-slate-400 font-semibold">
+                <div className="space-y-3 text-sm font-semibold" style={{ color: '#7A6A55' }}>
                   <div className="flex justify-between">
                     <span>Subtotal</span>
-                    <span className="text-slate-800 dark:text-slate-200">${totalPrice}</span>
+                    <span style={{ color: '#2C2416' }}>${totalPrice}</span>
                   </div>
                   
                   {appliedCoupon && (
-                    <div className="flex justify-between text-emerald-600 dark:text-emerald-400 font-bold">
+                    <div className="flex justify-between text-emerald-600 font-bold">
                       <span>Promo Discount ({appliedCoupon.code})</span>
                       <span>-${discountAmount.toFixed(2)}</span>
                     </div>
@@ -134,17 +137,17 @@ const Cart = () => {
 
                   <div className="flex justify-between">
                     <span>Shipping</span>
-                    <span className="text-slate-800 dark:text-slate-200">${shipping}</span>
+                    <span style={{ color: '#2C2416' }}>${shipping}</span>
                   </div>
                   
                   <div className="flex justify-between">
                     <span>Tax (included)</span>
-                    <span className="text-slate-800 dark:text-slate-200">$0.00</span>
+                    <span style={{ color: '#2C2416' }}>$0.00</span>
                   </div>
-                  <hr className="border-slate-100 dark:border-slate-700 my-2" />
-                  <div className="flex justify-between text-base font-bold text-slate-800 dark:text-slate-100">
+                  <hr style={{ borderColor: '#EDE5D8' }} className="my-2" />
+                  <div className="flex justify-between text-base font-bold" style={{ color: '#2C2416' }}>
                     <span>Grand Total</span>
-                    <span className="text-purple-600 dark:text-purple-400 font-black">${grandTotal.toFixed(2)}</span>
+                    <span className="font-black" style={{ color: '#8B6914' }}>${grandTotal.toFixed(2)}</span>
                   </div>
                 </div>
 
@@ -155,17 +158,17 @@ const Cart = () => {
                 </Link>
               </div>
 
-              {/* PROMOCODE PANEL */}
-              <div className="bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 p-6 rounded-2xl shadow-sm">
-                <h3 className="text-base font-bold text-slate-800 dark:text-slate-100 mb-4 text-left">
+              {/* PROMO PANEL */}
+              <div className="p-6 rounded-2xl shadow-sm" style={{ background: '#FFFFFF', border: '1px solid #EDE5D8' }}>
+                <h3 className="text-base font-bold mb-4 text-left" style={{ color: '#2C2416' }}>
                   Have a Promo Code?
                 </h3>
 
                 {appliedCoupon ? (
-                  <div className="bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-100 dark:border-emerald-900/50 rounded-xl p-4 flex justify-between items-center text-left">
+                  <div className="bg-emerald-50 border border-emerald-100 rounded-xl p-4 flex justify-between items-center text-left">
                     <div>
-                      <p className="text-xs font-bold text-emerald-800 dark:text-emerald-400 uppercase tracking-wider">Applied Coupon</p>
-                      <p className="text-sm font-extrabold text-emerald-900 dark:text-emerald-300 mt-0.5">
+                      <p className="text-xs font-bold text-emerald-800 uppercase tracking-wider">Applied Coupon</p>
+                      <p className="text-sm font-extrabold text-emerald-900 mt-0.5">
                         {appliedCoupon.code} ({(appliedCoupon.discount * 100)}% Off)
                       </p>
                     </div>
@@ -192,15 +195,15 @@ const Cart = () => {
                     </Button>
                   </form>
                 )}
-                <p className="text-[10px] text-slate-400 dark:text-slate-500 text-left mt-2.5 font-medium">
-                  Try codes: <code className="text-purple-600 bg-slate-50 dark:bg-slate-900 dark:text-purple-400">SAVE10</code> or <code className="text-purple-600 bg-slate-50 dark:bg-slate-900 dark:text-purple-400">SAVE20</code>. Limit one per order.
+                <p className="text-[10px] text-left mt-2.5 font-medium" style={{ color: '#A08B70' }}>
+                  Try codes: <code className="font-mono" style={{ color: '#8B6914', background: '#FAF7F2' }}>SAVE10</code> or <code className="font-mono" style={{ color: '#8B6914', background: '#FAF7F2' }}>SAVE20</code>. Limit one per order.
                 </p>
               </div>
             </div>
           </div>
         )}
-      </div>
-    </>
+      </main>
+    </div>
   );
 };
 

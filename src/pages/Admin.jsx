@@ -963,33 +963,35 @@ const Admin = () => {
 
   const getStatusBadge = (status) => {
     const styles = {
-      processing: "bg-blue-500/10 text-blue-400 border border-blue-500/20",
-      shipped: "bg-indigo-500/10 text-indigo-400 border border-indigo-500/20",
-      delivered: "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20",
-      cancelled: "bg-rose-500/10 text-rose-400 border border-rose-500/20",
+      processing: "bg-amber-50 text-amber-700 border border-amber-200",
+      shipped: "bg-[#FEF3C7] text-[#8B6914] border border-[#FDE68A]",
+      delivered: "bg-emerald-50 text-emerald-700 border border-emerald-200",
+      cancelled: "bg-rose-50 text-rose-700 border border-rose-200",
     };
-    return styles[status] || "bg-gray-500/10 text-gray-400";
+    return styles[status] || "bg-slate-50 text-slate-600 border border-slate-200";
   };
 
   const renderPaginationControls = (currentPage, totalPages, setPage) => {
     if (totalPages <= 1) return null;
     return (
-      <div className="p-4 bg-slate-800/20 border-t border-slate-800 flex items-center justify-between">
-        <span className="text-xs text-slate-400">
-          Page <strong className="text-slate-200">{currentPage}</strong> of {totalPages}
+      <div className="p-4 flex items-center justify-between border-t" style={{ background: '#FAF7F2', borderColor: '#EDE5D8' }}>
+        <span className="text-xs" style={{ color: '#7A6A55' }}>
+          Page <strong style={{ color: '#2C2416' }}>{currentPage}</strong> of {totalPages}
         </span>
         <div className="inline-flex space-x-2">
           <button
             disabled={currentPage === 1}
             onClick={() => setPage(prev => Math.max(prev - 1, 1))}
-            className="px-3 py-1 bg-slate-800 text-slate-300 text-xs font-semibold rounded-lg hover:bg-slate-700 disabled:opacity-30 disabled:hover:bg-slate-800 transition"
+            className="px-3 py-1 bg-white border text-xs font-semibold rounded-lg hover:bg-[#FAF7F2] transition disabled:opacity-30"
+            style={{ borderColor: '#EDE5D8', color: '#7A6A55' }}
           >
             Previous
           </button>
           <button
             disabled={currentPage === totalPages}
             onClick={() => setPage(prev => Math.min(prev + 1, totalPages))}
-            className="px-3 py-1 bg-indigo-600 text-white text-xs font-semibold rounded-lg hover:bg-indigo-700 disabled:opacity-30 disabled:hover:bg-indigo-600 transition"
+            className="px-3 py-1 text-white text-xs font-semibold rounded-lg hover:opacity-90 transition disabled:opacity-30"
+            style={{ background: 'linear-gradient(135deg, #8B6914 0%, #C4A882 100%)' }}
           >
             Next
           </button>
@@ -1000,22 +1002,22 @@ const Admin = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#0f172a] flex flex-col justify-center items-center text-white">
-        <div className="w-12 h-12 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin mb-4"></div>
-        <p className="text-slate-400 font-medium">Loading Dashboard Data...</p>
+      <div className="min-h-screen flex flex-col justify-center items-center" style={{ background: '#FAFAF8', color: '#2C2416' }}>
+        <div className="w-12 h-12 border-4 rounded-full animate-spin mb-4" style={{ borderColor: '#EDE5D8', borderTopColor: '#8B6914' }}></div>
+        <p className="font-medium" style={{ color: '#A08B70' }}>Loading Dashboard Data...</p>
       </div>
     );
   }
 
   if (!token || user?.role !== "admin") {
     return (
-      <div className="min-h-screen bg-[#0f172a] flex items-center justify-center p-6">
-        <div className="bg-[#1e293b] p-8 rounded-2xl shadow-xl max-w-md w-full text-center border border-slate-800">
-          <div className="w-16 h-16 bg-rose-500/10 text-rose-500 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl font-bold">✕</div>
-          <h2 className="text-2xl font-bold text-white mb-2">Access Denied</h2>
-          <p className="text-slate-400 mb-6">This dashboard is restricted to administrator accounts only.</p>
-          <Link to="/login" className="inline-block w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-medium transition duration-200 shadow-lg shadow-indigo-600/20">
-            Go to Login
+      <div className="min-h-screen flex items-center justify-center p-6" style={{ background: '#FAFAF8' }}>
+        <div className="bg-white p-8 rounded-2xl shadow-xl max-w-md w-full text-center border" style={{ borderColor: '#EDE5D8' }}>
+          <div className="w-16 h-16 bg-rose-50 text-rose-500 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl font-bold border border-rose-100">✕</div>
+          <h2 className="text-2xl font-bold mb-2" style={{ color: '#2C2416' }}>Access Denied</h2>
+          <p className="mb-6 text-sm" style={{ color: '#7A6A55' }}>This dashboard is restricted to administrator accounts only.</p>
+          <Link to="/login" className="inline-block w-full">
+            <Button variant="primary" className="w-full py-3">Go to Login</Button>
           </Link>
         </div>
       </div>
@@ -1023,13 +1025,13 @@ const Admin = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#0f172a] text-slate-100 flex flex-col lg:flex-row">
+    <div className="min-h-screen flex flex-col lg:flex-row" style={{ background: '#FAFAF8', color: '#2C2416' }}>
       {/* SIDEBAR */}
-      <aside className="w-full lg:w-64 bg-[#1e293b] border-r border-slate-800 flex flex-col justify-between p-6 shrink-0">
+      <aside className="w-full lg:w-64 bg-white border-r flex flex-col justify-between p-6 shrink-0" style={{ borderColor: '#EDE5D8' }}>
         <div>
           <div className="flex items-center space-x-3 mb-8">
-            <div className="w-9 h-9 bg-indigo-600 rounded-xl flex items-center justify-center font-bold text-white text-lg shadow-lg shadow-indigo-600/30">S</div>
-            <span className="text-xl font-bold tracking-tight text-white">ShopNPay</span>
+            <div className="w-9 h-9 rounded-xl flex items-center justify-center font-bold text-white text-lg shadow-md" style={{ background: 'linear-gradient(135deg, #8B6914 0%, #C4A882 100%)' }}>S</div>
+            <span className="text-xl font-bold tracking-tight" style={{ color: '#2C2416' }}>ShopNPay</span>
           </div>
 
           <nav className="space-y-1.5">
@@ -1041,13 +1043,20 @@ const Admin = () => {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${activeTab === tab.id
-                  ? "bg-indigo-600 text-white shadow-lg shadow-indigo-600/10"
-                  : "text-slate-400 hover:bg-slate-800 hover:text-slate-200"
-                  }`}
+                className={`w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${
+                  activeTab === tab.id
+                    ? "text-white"
+                    : "hover:bg-[#FAF7F2]"
+                }`}
+                style={{
+                  background: activeTab === tab.id ? 'linear-gradient(135deg, #8B6914 0%, #C4A882 100%)' : 'transparent',
+                  color: activeTab === tab.id ? '#FFFFFF' : '#7A6A55'
+                }}
               >
                 <span>{tab.label}</span>
-                <span className={`text-xs px-2 py-0.5 rounded-md ${activeTab === tab.id ? "bg-indigo-700 text-white" : "bg-slate-800 text-slate-400"}`}>
+                <span className={`text-xs px-2 py-0.5 rounded-md ${
+                  activeTab === tab.id ? "bg-[#705410] text-white" : "bg-[#FAF7F2] text-[#7A6A55] border"
+                }`} style={{ borderColor: '#EDE5D8' }}>
                   {tab.count}
                 </span>
               </button>
@@ -1055,62 +1064,63 @@ const Admin = () => {
           </nav>
         </div>
 
-        <div className="mt-8 pt-4 border-t border-slate-800 flex items-center justify-between">
+        <div className="mt-8 pt-4 border-t flex items-center justify-between" style={{ borderColor: '#EDE5D8' }}>
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 rounded-full bg-slate-700 flex items-center justify-center text-sm font-semibold text-slate-200 uppercase">
+            <div className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold uppercase" style={{ background: '#FAF7F2', border: '1px solid #EDE5D8', color: '#8B6914' }}>
               {user?.name?.slice(0, 2) || "AD"}
             </div>
             <div className="truncate max-w-[100px]">
-              <p className="text-sm font-medium text-white truncate">{user?.name || "Admin"}</p>
-              <p className="text-xs text-slate-400 capitalize">{user?.role}</p>
+              <p className="text-sm font-medium truncate" style={{ color: '#2C2416' }}>{user?.name || "Admin"}</p>
+              <p className="text-xs capitalize" style={{ color: '#A08B70' }}>{user?.role}</p>
             </div>
           </div>
-          <button onClick={handleLogout} className="p-2 text-slate-400 hover:text-rose-400 bg-slate-800 hover:bg-rose-500/10 rounded-xl transition duration-150" title="Logout">➔</button>
+          <button onClick={handleLogout} className="p-2 hover:text-rose-600 bg-[#FAF7F2] hover:bg-rose-50 rounded-xl transition duration-150 border" style={{ borderColor: '#EDE5D8', color: '#7A6A55' }} title="Logout">➔</button>
         </div>
       </aside>
 
       {/* MAIN CONTENT AREA */}
-      <main className="flex-1 p-6 lg:p-10 overflow-x-hidden">
+      <main className="flex-grow p-6 lg:p-10 overflow-x-hidden w-full">
         {/* TOP METRICS STATS */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-5 mb-8">
-          <div className="bg-[#1e293b] border border-slate-800 p-6 rounded-2xl shadow-sm">
-            <p className="text-sm font-medium text-slate-400 mb-1">Total Revenue</p>
-            <h3 className="text-2xl font-bold text-emerald-400">
+          <div className="bg-white border p-6 rounded-2xl shadow-sm" style={{ borderColor: '#EDE5D8' }}>
+            <p className="text-sm font-medium mb-1" style={{ color: '#A08B70' }}>Total Revenue</p>
+            <h3 className="text-2xl font-bold" style={{ color: '#8B6914' }}>
               ${orders.reduce((sum, o) => sum + (o.orderStatus !== "cancelled" ? o.totalAmount : 0), 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}
             </h3>
           </div>
-          <div className="bg-[#1e293b] border border-slate-800 p-6 rounded-2xl shadow-sm">
-            <p className="text-sm font-medium text-slate-400 mb-1">Total Orders</p>
-            <h3 className="text-2xl font-bold text-white">{totalOrders}</h3>
+          <div className="bg-white border p-6 rounded-2xl shadow-sm" style={{ borderColor: '#EDE5D8' }}>
+            <p className="text-sm font-medium mb-1" style={{ color: '#A08B70' }}>Total Orders</p>
+            <h3 className="text-2xl font-bold" style={{ color: '#2C2416' }}>{totalOrders}</h3>
           </div>
-          <div className="bg-[#1e293b] border border-slate-800 p-6 rounded-2xl shadow-sm">
-            <p className="text-sm font-medium text-slate-400 mb-1">Total Products</p>
-            <h3 className="text-2xl font-bold text-white">{totalProducts}</h3>
+          <div className="bg-white border p-6 rounded-2xl shadow-sm" style={{ borderColor: '#EDE5D8' }}>
+            <p className="text-sm font-medium mb-1" style={{ color: '#A08B70' }}>Total Products</p>
+            <h3 className="text-2xl font-bold" style={{ color: '#2C2416' }}>{totalProducts}</h3>
           </div>
-          <div className="bg-[#1e293b] border border-slate-800 p-6 rounded-2xl shadow-sm">
-            <p className="text-sm font-medium text-slate-400 mb-1">Total Users</p>
-            <h3 className="text-2xl font-bold text-white">{totalUsers}</h3>
+          <div className="bg-white border p-6 rounded-2xl shadow-sm" style={{ borderColor: '#EDE5D8' }}>
+            <p className="text-sm font-medium mb-1" style={{ color: '#A08B70' }}>Total Users</p>
+            <h3 className="text-2xl font-bold" style={{ color: '#2C2416' }}>{totalUsers}</h3>
           </div>
         </div>
 
         {error && (
-          <div className="bg-rose-500/10 border border-rose-500/20 text-rose-400 p-4 rounded-xl mb-6 flex items-center space-x-3">
+          <div className="bg-rose-50 border border-rose-100 text-rose-600 p-4 rounded-xl mb-6 flex items-center space-x-3">
             <span>⚠️</span>
             <p className="text-sm font-medium">{error}</p>
           </div>
         )}
 
         {/* DATA CONTAINER PANEL */}
-        <div className="bg-[#1e293b] border border-slate-800 rounded-2xl shadow-sm overflow-hidden">
+        <div className="bg-white border rounded-2xl shadow-sm overflow-hidden" style={{ borderColor: '#EDE5D8' }}>
           {/* ORDERS TAB */}
           {activeTab === "orders" && (
             <div>
-              <div className="p-6 border-b border-slate-800 flex items-center justify-between">
-                <h2 className="text-lg font-bold text-white">Recent Orders</h2>
+              <div className="p-6 border-b flex items-center justify-between" style={{ borderColor: '#EDE5D8' }}>
+                <h2 className="text-lg font-bold" style={{ color: '#2C2416' }}>Recent Orders</h2>
                 <select
                   value={ordersSort}
                   onChange={(e) => { setOrdersSort(e.target.value); setOrdersPage(1); }}
-                  className="px-3 py-1.5 bg-slate-900 border border-slate-800 rounded-xl text-slate-300 text-xs font-medium focus:border-indigo-500 focus:outline-none cursor-pointer hover:bg-slate-800 transition"
+                  className="px-3 py-1.5 border rounded-xl text-xs font-medium focus:outline-none cursor-pointer transition"
+                  style={{ background: '#FAF7F2', borderColor: '#EDE5D8', color: '#2C2416' }}
                 >
                   <option value="latest">Latest to Oldest</option>
                   <option value="oldest">Oldest to Latest</option>
@@ -1119,7 +1129,7 @@ const Admin = () => {
               <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse">
                   <thead>
-                    <tr className="bg-slate-800/50 text-slate-400 text-xs font-semibold uppercase tracking-wider">
+                    <tr className="text-xs font-semibold uppercase tracking-wider border-b bg-[#FAF7F2]" style={{ borderColor: '#EDE5D8', color: '#7A6A55' }}>
                       <th className="py-4 px-6">Order ID</th>
                       <th className="py-4 px-6">Customer Details</th>
                       <th className="py-4 px-6">Total Amount</th>
@@ -1127,33 +1137,37 @@ const Admin = () => {
                       <th className="py-4 px-6 text-right">Actions</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-800 text-sm">
+                  <tbody className="divide-y text-sm" style={{ borderColor: '#EDE5D8' }}>
                     {orders.length === 0 ? (
                       <tr>
-                        <td colSpan="5" className="text-center py-10 text-slate-500">No orders found.</td>
+                        <td colSpan="5" className="text-center py-10" style={{ color: '#A08B70' }}>No orders found.</td>
                       </tr>
                     ) : (
                       orders.map(o => (
-                        <tr key={o._id} className="hover:bg-slate-800/30 transition duration-150">
-                          <td className="py-4 px-6 font-mono text-xs text-indigo-400">{o.orderId || "N/A"}</td>
+                        <tr key={o._id} className="hover:bg-[#FAF7F2]/40 transition duration-150">
+                          <td className="py-4 px-6 font-mono text-xs font-bold" style={{ color: '#8B6914' }}>{o.orderId || "N/A"}</td>
                           <td className="py-4 px-6">
-                            <p className="font-medium text-white">{o.user?.name || "Guest User"}</p>
-                            <p className="text-xs text-slate-400 truncate max-w-[180px]">{o.user?.email || ""}</p>
+                            <p className="font-semibold" style={{ color: '#2C2416' }}>{o.user?.name || "Guest User"}</p>
+                            <p className="text-xs" style={{ color: '#A08B70' }}>{o.user?.email || ""}</p>
                           </td>
-                          <td className="py-4 px-6 font-semibold text-slate-200">${o.totalAmount}</td>
+                          <td className="py-4 px-6 font-semibold" style={{ color: '#2C2416' }}>${o.totalAmount}</td>
                           <td className="py-4 px-6">
-                            <span className={`inline-flex px-2.5 py-1 rounded-md text-xs font-medium capitalize ${getStatusBadge(o.orderStatus)}`}>
+                            <span className={`inline-flex px-2.5 py-1 rounded-md text-xs font-semibold capitalize ${getStatusBadge(o.orderStatus)}`}>
                               {o.orderStatus}
                             </span>
                           </td>
                           <td className="py-4 px-6 text-right space-x-2">
                             {o.orderStatus !== "delivered" && o.orderStatus !== "cancelled" && (
-                              <button onClick={() => proceedOrder(o)} className="px-3 py-1.5 bg-indigo-600/10 hover:bg-indigo-600 text-indigo-400 hover:text-white text-xs font-medium rounded-lg transition">
+                              <button
+                                onClick={() => proceedOrder(o)}
+                                className="px-3 py-1.5 text-xs font-semibold rounded-lg transition text-white"
+                                style={{ background: 'linear-gradient(135deg, #8B6914 0%, #C4A882 100%)' }}
+                              >
                                 {o.orderStatus === "processing" ? "Ship Order" : "Deliver Order"}
                               </button>
                             )}
                             {o.orderStatus !== "cancelled" && o.orderStatus !== "delivered" && (
-                              <button onClick={() => cancelOrder(o)} className="px-3 py-1.5 bg-rose-500/10 text-rose-400 hover:text-white text-xs font-medium rounded-lg transition">Cancel</button>
+                              <button onClick={() => cancelOrder(o)} className="px-3 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-600 text-xs font-semibold rounded-lg transition border border-rose-100">Cancel</button>
                             )}
                           </td>
                         </tr>
@@ -1169,49 +1183,50 @@ const Admin = () => {
           {/* PRODUCTS CATALOG TAB */}
           {activeTab === "products" && (
             <div>
-              <div className="p-6 border-b border-slate-800 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                <h2 className="text-lg font-bold text-white">Product Inventory</h2>
+              <div className="p-6 border-b flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4" style={{ borderColor: '#EDE5D8' }}>
+                <h2 className="text-lg font-bold" style={{ color: '#2C2416' }}>Product Inventory</h2>
                 <div className="flex items-center space-x-3 self-end sm:self-auto">
                   <select
                     value={productsSort}
                     onChange={(e) => { setProductsSort(e.target.value); setProductsPage(1); }}
-                    className="px-3 py-1.5 bg-slate-900 border border-slate-800 rounded-xl text-slate-300 text-xs font-medium focus:border-indigo-500 focus:outline-none cursor-pointer hover:bg-slate-800 transition"
+                    className="px-3 py-1.5 border rounded-xl text-xs font-medium focus:outline-none cursor-pointer transition"
+                    style={{ background: '#FAF7F2', borderColor: '#EDE5D8', color: '#2C2416' }}
                   >
                     <option value="latest">Latest to Oldest</option>
                     <option value="oldest">Oldest to Latest</option>
                   </select>
-                  <button onClick={openAddProduct} className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-xl transition shadow-md shadow-indigo-600/10">+ Add Product</button>
+                  <Button onClick={openAddProduct} variant="primary" className="px-4 py-2 text-sm font-semibold">+ Add Product</Button>
                 </div>
               </div>
               <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse">
                   <thead>
-                    <tr className="bg-slate-800/50 text-slate-400 text-xs font-semibold uppercase tracking-wider">
+                    <tr className="text-xs font-semibold uppercase tracking-wider border-b bg-[#FAF7F2]" style={{ borderColor: '#EDE5D8', color: '#7A6A55' }}>
                       <th className="py-4 px-6">Product Title</th>
                       <th className="py-4 px-6">Category</th>
                       <th className="py-4 px-6">Price</th>
                       <th className="py-4 px-6 text-right">Actions</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-800 text-sm">
+                  <tbody className="divide-y text-sm" style={{ borderColor: '#EDE5D8' }}>
                     {productsList.length === 0 ? (
                       <tr>
-                        <td colSpan="4" className="text-center py-10 text-slate-500">No products available.</td>
+                        <td colSpan="4" className="text-center py-10" style={{ color: '#A08B70' }}>No products available.</td>
                       </tr>
                     ) : (
                       productsList.map(p => (
-                        <tr key={p.productId} className="hover:bg-slate-800/30 transition duration-150">
+                        <tr key={p.productId} className="hover:bg-[#FAF7F2]/40 transition duration-150">
                           <td className="py-4 px-6">
                             <div className="flex items-center space-x-3">
-                              {p.images?.[0]?.url && <img src={p.images[0].url} alt="" className="w-8 h-8 rounded-lg bg-slate-900 object-cover border border-slate-800" />}
-                              <span className="font-medium text-white">{p.title}</span>
+                              {p.images?.[0]?.url && <img src={p.images[0].url} alt="" className="w-8 h-8 rounded-lg bg-[#FAF7F2] object-cover border" style={{ borderColor: '#EDE5D8' }} />}
+                              <span className="font-semibold" style={{ color: '#2C2416' }}>{p.title}</span>
                             </div>
                           </td>
-                          <td className="py-4 px-6 text-slate-400 capitalize font-mono text-xs">{p.category || "General"}</td>
-                          <td className="py-4 px-6 font-semibold text-slate-200">${p.price}</td>
+                          <td className="py-4 px-6 capitalize font-mono text-xs font-bold" style={{ color: '#8B6914' }}>{p.category || "General"}</td>
+                          <td className="py-4 px-6 font-semibold" style={{ color: '#2C2416' }}>${p.price}</td>
                           <td className="py-4 px-6 text-right space-x-2">
-                            <button onClick={() => openEditProduct(p)} className="px-3 py-1.5 bg-slate-800 text-slate-300 hover:bg-slate-700 text-xs font-medium rounded-lg transition">Edit</button>
-                            <button onClick={() => deleteProduct(p.productId)} className="px-3 py-1.5 bg-rose-500/10 text-rose-400 hover:bg-rose-500 hover:text-white text-xs font-medium rounded-lg transition">Delete</button>
+                            <button onClick={() => openEditProduct(p)} className="px-3 py-1.5 bg-white border hover:bg-[#FAF7F2] text-xs font-semibold rounded-lg transition" style={{ borderColor: '#EDE5D8', color: '#2C2416' }}>Edit</button>
+                            <button onClick={() => deleteProduct(p.productId)} className="px-3 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-600 text-xs font-semibold rounded-lg transition border border-rose-100">Delete</button>
                           </td>
                         </tr>
                       ))
@@ -1226,20 +1241,22 @@ const Admin = () => {
           {/* USERS TAB */}
           {activeTab === "users" && (
             <div>
-              <div className="p-6 border-b border-slate-800 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                <h2 className="text-lg font-bold text-white">Registered Users</h2>
+              <div className="p-6 border-b flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4" style={{ borderColor: '#EDE5D8' }}>
+                <h2 className="text-lg font-bold" style={{ color: '#2C2416' }}>Registered Users</h2>
                 <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
                   <input
                     type="text"
                     value={userSearchQuery}
                     onChange={(e) => { setUserSearchQuery(e.target.value); setUsersPage(1); }}
                     placeholder="Search user by email..."
-                    className="px-4 py-1.5 bg-slate-900 border border-slate-800 rounded-xl text-white text-xs placeholder-slate-500 focus:border-indigo-500 focus:outline-none w-full sm:w-64"
+                    className="px-4 py-1.5 border rounded-xl text-xs placeholder-slate-400 focus:border-[#8B6914] focus:outline-none w-full sm:w-64"
+                    style={{ background: '#FAF7F2', borderColor: '#EDE5D8', color: '#2C2416' }}
                   />
                   <select
                     value={usersSort}
                     onChange={(e) => { setUsersSort(e.target.value); setUsersPage(1); }}
-                    className="px-3 py-1.5 bg-slate-900 border border-slate-800 rounded-xl text-slate-300 text-xs font-medium focus:border-indigo-500 focus:outline-none cursor-pointer hover:bg-slate-800 transition"
+                    className="px-3 py-1.5 border rounded-xl text-xs font-medium focus:outline-none cursor-pointer transition"
+                    style={{ background: '#FAF7F2', borderColor: '#EDE5D8', color: '#2C2416' }}
                   >
                     <option value="latest">Latest to Oldest</option>
                     <option value="oldest">Oldest to Latest</option>
@@ -1249,32 +1266,36 @@ const Admin = () => {
               <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse">
                   <thead>
-                    <tr className="bg-slate-800/50 text-slate-400 text-xs font-semibold uppercase tracking-wider">
+                    <tr className="text-xs font-semibold uppercase tracking-wider border-b bg-[#FAF7F2]" style={{ borderColor: '#EDE5D8', color: '#7A6A55' }}>
                       <th className="py-4 px-6">User Info</th>
                       <th className="py-4 px-6">Role</th>
                       <th className="py-4 px-6 text-right">Actions</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-800 text-sm">
+                  <tbody className="divide-y text-sm" style={{ borderColor: '#EDE5D8' }}>
                     {usersList.length === 0 ? (
                       <tr>
-                        <td colSpan="3" className="text-center py-10 text-slate-500">No users found.</td>
+                        <td colSpan="3" className="text-center py-10" style={{ color: '#A08B70' }}>No users found.</td>
                       </tr>
                     ) : (
                       usersList.map(u => (
-                        <tr key={u._id} className="hover:bg-slate-800/30 transition duration-150">
+                        <tr key={u._id} className="hover:bg-[#FAF7F2]/40 transition duration-150">
                           <td className="py-4 px-6">
-                            <p className="font-medium text-white">{u.name || "N/A"}</p>
-                            <p className="text-xs text-slate-400">{u.email}</p>
+                            <p className="font-semibold" style={{ color: '#2C2416' }}>{u.name || "N/A"}</p>
+                            <p className="text-xs" style={{ color: '#A08B70' }}>{u.email}</p>
                           </td>
                           <td className="py-4 px-6">
-                            <span className={`inline-flex px-2.5 py-0.5 rounded text-xs font-semibold uppercase tracking-wide border ${u.role === "admin" ? "bg-indigo-500/10 text-indigo-400 border-indigo-500/20" : "bg-slate-700/50 text-slate-300 border-slate-700"}`}>
+                            <span className={`inline-flex px-2.5 py-0.5 rounded text-xs font-semibold uppercase tracking-wide border ${
+                              u.role === "admin"
+                                ? "bg-[#FEF3C7] text-[#8B6914] border-[#FDE68A]"
+                                : "bg-slate-100 text-slate-600 border-slate-200"
+                            }`}>
                               {u.role}
                             </span>
                           </td>
                           <td className="py-4 px-6 text-right space-x-2">
-                            <button onClick={() => toggleUserRole(u)} className="px-3 py-1.5 bg-slate-800 text-slate-300 hover:bg-slate-700 text-xs font-medium rounded-lg transition">Change Role</button>
-                            <button disabled={u._id === user._id} onClick={() => deleteUser(u._id)} className="px-3 py-1.5 bg-rose-500/10 text-rose-400 hover:bg-rose-500 hover:text-white text-xs font-medium rounded-lg transition disabled:opacity-20">Delete</button>
+                            <button onClick={() => toggleUserRole(u)} className="px-3 py-1.5 bg-white border hover:bg-[#FAF7F2] text-xs font-semibold rounded-lg transition" style={{ borderColor: '#EDE5D8', color: '#2C2416' }}>Change Role</button>
+                            <button disabled={u._id === user._id} onClick={() => deleteUser(u._id)} className="px-3 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-600 text-xs font-semibold rounded-lg transition border border-rose-100 disabled:opacity-20">Delete</button>
                           </td>
                         </tr>
                       ))
@@ -1290,26 +1311,46 @@ const Admin = () => {
 
       {/* MULTIPART FORM MODAL */}
       {isProductModalOpen && (
-        <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-[#1e293b] border border-slate-800 w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden transform transition-all">
-            <div className="px-6 py-4 border-b border-slate-800 flex items-center justify-between">
-              <h3 className="text-base font-bold text-white">{editingProduct ? "Edit Product" : "Add New Product"}</h3>
-              <button onClick={() => setIsProductModalOpen(false)} className="text-slate-400 hover:text-white">✕</button>
+        <div className="fixed inset-0 z-50 overflow-y-auto bg-[#2C2416]/50 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white border w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden transform transition-all" style={{ borderColor: '#EDE5D8' }}>
+            <div className="px-6 py-4 border-b flex items-center justify-between" style={{ borderColor: '#EDE5D8' }}>
+              <h3 className="text-base font-bold" style={{ color: '#2C2416' }}>{editingProduct ? "Edit Product" : "Add New Product"}</h3>
+              <button onClick={() => setIsProductModalOpen(false)} className="hover:opacity-75 font-semibold" style={{ color: '#7A6A55' }}>✕</button>
             </div>
 
             <form onSubmit={handleProductSubmit} className="p-6 space-y-4 max-h-[80vh] overflow-y-auto">
               <div>
-                <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Product Title</label>
-                <input type="text" required value={productForm.title} onChange={(e) => setProductForm({ ...productForm, title: e.target.value })} className="w-full px-4 py-2 bg-slate-900 border border-slate-800 rounded-xl text-white text-sm focus:border-indigo-500 focus:outline-none" />
+                <label className="block text-xs font-semibold uppercase tracking-wider mb-1" style={{ color: '#A08B70' }}>Product Title</label>
+                <input
+                  type="text"
+                  required
+                  value={productForm.title}
+                  onChange={(e) => setProductForm({ ...productForm, title: e.target.value })}
+                  className="w-full px-4 py-2 border rounded-xl text-sm outline-none focus:border-[#8B6914] transition-all"
+                  style={{ background: '#FAF7F2', borderColor: '#EDE5D8', color: '#2C2416' }}
+                />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Price ($)</label>
-                  <input type="number" required min="1" value={productForm.price} onChange={(e) => setProductForm({ ...productForm, price: e.target.value })} className="w-full px-4 py-2 bg-slate-900 border border-slate-800 rounded-xl text-white text-sm focus:border-indigo-500 focus:outline-none" />
+                  <label className="block text-xs font-semibold uppercase tracking-wider mb-1" style={{ color: '#A08B70' }}>Price ($)</label>
+                  <input
+                    type="number"
+                    required
+                    min="1"
+                    value={productForm.price}
+                    onChange={(e) => setProductForm({ ...productForm, price: e.target.value })}
+                    className="w-full px-4 py-2 border rounded-xl text-sm outline-none focus:border-[#8B6914] transition-all"
+                    style={{ background: '#FAF7F2', borderColor: '#EDE5D8', color: '#2C2416' }}
+                  />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Category</label>
-                  <select value={productForm.category} onChange={(e) => setProductForm({ ...productForm, category: e.target.value })} className="w-full px-4 py-2 bg-slate-900 border border-slate-800 rounded-xl text-white text-sm focus:border-indigo-500 focus:outline-none">
+                  <label className="block text-xs font-semibold uppercase tracking-wider mb-1" style={{ color: '#A08B70' }}>Category</label>
+                  <select
+                    value={productForm.category}
+                    onChange={(e) => setProductForm({ ...productForm, category: e.target.value })}
+                    className="w-full px-4 py-2 border rounded-xl text-sm outline-none focus:border-[#8B6914] transition-all"
+                    style={{ background: '#FAF7F2', borderColor: '#EDE5D8', color: '#2C2416' }}
+                  >
                     <option value="shoes">Shoes</option>
                     <option value="watch">Watch</option>
                     <option value="phone">Phone</option>
@@ -1319,16 +1360,30 @@ const Admin = () => {
                 </div>
               </div>
               <div>
-                <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Description</label>
-                <textarea required rows="4" value={productForm.description} onChange={(e) => setProductForm({ ...productForm, description: e.target.value })} className="w-full px-4 py-2 bg-slate-900 border border-slate-800 rounded-xl text-white text-sm focus:border-indigo-500 focus:outline-none resize-none" />
+                <label className="block text-xs font-semibold uppercase tracking-wider mb-1" style={{ color: '#A08B70' }}>Description</label>
+                <textarea
+                  required
+                  rows="4"
+                  value={productForm.description}
+                  onChange={(e) => setProductForm({ ...productForm, description: e.target.value })}
+                  className="w-full px-4 py-2 border rounded-xl text-sm outline-none focus:border-[#8B6914] transition-all resize-none"
+                  style={{ background: '#FAF7F2', borderColor: '#EDE5D8', color: '#2C2416' }}
+                />
               </div>
               <div>
-                <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Product Images</label>
-                <input type="file" multiple accept="image/*" onChange={(e) => setProductForm({ ...productForm, images: Array.from(e.target.files) })} className="w-full text-xs text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:bg-indigo-600/10 file:text-indigo-400 cursor-pointer" />
+                <label className="block text-xs font-semibold uppercase tracking-wider mb-1" style={{ color: '#A08B70' }}>Product Images</label>
+                <input
+                  type="file"
+                  multiple
+                  accept="image/*"
+                  onChange={(e) => setProductForm({ ...productForm, images: Array.from(e.target.files) })}
+                  className="w-full text-xs cursor-pointer file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:bg-[#FEF3C7] file:text-[#8B6914] font-semibold"
+                  style={{ color: '#7A6A55' }}
+                />
               </div>
-              <div className="pt-4 border-t border-slate-800 flex justify-end space-x-2">
-                <button type="button" onClick={() => setIsProductModalOpen(false)} className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-medium rounded-xl transition">Cancel</button>
-                <button type="submit" disabled={submittingProduct} className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-xl transition disabled:opacity-50">{submittingProduct ? "Saving..." : "Save Product"}</button>
+              <div className="pt-4 border-t flex justify-end space-x-2" style={{ borderColor: '#EDE5D8' }}>
+                <button type="button" onClick={() => setIsProductModalOpen(false)} className="px-4 py-2 bg-[#FAF7F2] hover:bg-[#F5F0E8] text-xs font-semibold rounded-xl transition border" style={{ borderColor: '#EDE5D8', color: '#7A6A55' }}>Cancel</button>
+                <Button type="submit" variant="primary" disabled={submittingProduct} className="px-4 py-2 text-sm font-semibold">{submittingProduct ? "Saving..." : "Save Product"}</Button>
               </div>
             </form>
           </div>

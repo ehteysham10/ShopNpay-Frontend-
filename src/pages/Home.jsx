@@ -172,61 +172,165 @@ const Home = () => {
   };
 
   return (
-    <div className="w-full max-w-full overflow-x-hidden min-h-screen bg-slate-50 dark:bg-slate-950 transition-colors duration-300">
+    <div className="w-full max-w-full overflow-x-hidden min-h-screen transition-colors duration-300" style={{ background: '#FAFAF8' }}>
       <Navbar />
 
       {/* Hero */}
-      <section className="relative overflow-hidden border-b border-slate-100 dark:border-slate-900">
-        <div className="absolute inset-0 bg-gradient-to-br from-purple-50 via-slate-50 to-indigo-50 dark:from-slate-900 dark:via-slate-950 dark:to-slate-900" />
+      <section className="relative overflow-hidden border-b border-stone-100">
+        <div className="absolute inset-0" style={{ background: 'linear-gradient(135deg, #FDFCFB 0%, #F5F3F0 50%, #FAF8F5 100%)' }} />
         <div className="absolute inset-0 hero-mesh" />
-        <div className="absolute top-10 left-[10%] w-48 h-48 bg-purple-400/10 dark:bg-purple-500/5 rounded-full blur-3xl" />
-        <div className="absolute bottom-0 right-[15%] w-64 h-64 bg-blue-400/10 dark:bg-blue-500/5 rounded-full blur-3xl" />
+        <div className="absolute top-10 left-[10%] w-48 h-48 rounded-full blur-3xl" style={{ background: 'rgba(210, 193, 173, 0.15)' }} />
+        <div className="absolute bottom-0 right-[15%] w-64 h-64 rounded-full blur-3xl" style={{ background: 'rgba(180, 160, 140, 0.1)' }} />
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-20">
-          <div className="max-w-3xl mx-auto text-center animate-fade-in">
-            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border border-purple-100 dark:border-purple-900/50 text-xs font-bold text-purple-600 dark:text-purple-400 uppercase tracking-widest shadow-sm mb-5">
-              <span className="w-1.5 h-1.5 rounded-full bg-purple-500 animate-pulse" />
-              Premium Collection
-            </span>
+          <div className="grid lg:grid-cols-12 gap-12 items-center">
+            
+            {/* Left Column: Text & Badges */}
+            <div className="lg:col-span-6 space-y-6 text-left animate-fade-in">
+              <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full backdrop-blur-sm border text-xs font-bold uppercase tracking-widest shadow-sm" style={{ background: 'rgba(255,255,255,0.85)', borderColor: '#E8E0D6', color: '#8B7355' }}>
+                <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: '#C4A882' }} />
+                Premium Collection
+              </span>
 
-            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black text-slate-900 dark:text-slate-50 tracking-tight leading-[1.1]">
-              Discover Your Next{" "}
-              <span className="bg-gradient-to-r from-purple-600 via-indigo-600 to-blue-600 dark:from-purple-400 dark:via-indigo-400 dark:to-blue-400 bg-clip-text text-transparent">
-                Perfect Match
-              </span>
-            </h1>
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-[1.1]" style={{ color: '#2C2416' }}>
+                Discover Your Next<br />
+                <span className="bg-clip-text text-transparent" style={{ backgroundImage: 'linear-gradient(135deg, #8B6914 0%, #C4954A 50%, #8B6914 100%)' }}>
+                  Perfect Match
+                </span>
+              </h1>
 
-            <p className="mt-4 sm:mt-5 text-slate-500 dark:text-slate-400 text-sm sm:text-lg max-w-xl mx-auto font-medium leading-relaxed">
-              Curated tech, fashion, and lifestyle products — handpicked for quality and style.
-            </p>
+              <p className="text-sm sm:text-lg font-medium leading-relaxed max-w-xl" style={{ color: '#7A6A55' }}>
+                Curated tech, fashion, and lifestyle products — handpicked for quality and style.
+              </p>
 
-            <div className="mt-8 flex flex-wrap items-center justify-center gap-3 sm:gap-6 text-xs sm:text-sm font-semibold text-slate-500 dark:text-slate-400">
-              <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm border border-slate-100 dark:border-slate-800">
-                <svg className="w-4 h-4 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-                </svg>
-                {initialLoading ? "..." : productsList.length} Products
-              </span>
-              <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm border border-slate-100 dark:border-slate-800">
-                <svg className="w-4 h-4 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-                </svg>
-                Secure Checkout
-              </span>
-              <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm border border-slate-100 dark:border-slate-800">
-                <svg className="w-4 h-4 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                Fast Delivery
-              </span>
+              <div className="flex flex-wrap items-center gap-3 text-xs sm:text-sm font-semibold" style={{ color: '#7A6A55' }}>
+                <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg backdrop-blur-sm border bg-white/60" style={{ borderColor: '#E8DDD0' }}>
+                  <svg className="w-4 h-4" style={{ color: '#C4954A' }} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                  </svg>
+                  72-Hours Delivery
+                </span>
+                <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg backdrop-blur-sm border bg-white/60" style={{ borderColor: '#E8DDD0' }}>
+                  <svg className="w-4 h-4" style={{ color: '#6B9E7A' }} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                  </svg>
+                  Secure Checkout
+                </span>
+                <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg backdrop-blur-sm border bg-white/60" style={{ borderColor: '#E8DDD0' }}>
+                  <svg className="w-4 h-4" style={{ color: '#7B9E87' }} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  Fast Delivery
+                </span>
+              </div>
             </div>
+
+            {/* Right Column: Beautiful Product Collage */}
+            <div className="lg:col-span-6 animate-fade-in-up" style={{ animationDelay: '150ms' }}>
+              <div className="grid grid-cols-3 gap-3 md:gap-4 max-h-[450px]">
+                <div className="relative group overflow-hidden rounded-2xl shadow-md border" style={{ borderColor: 'rgba(237, 229, 216, 0.4)' }}>
+                  <img 
+                    src="https://images.unsplash.com/photo-1522312346375-d1a52e2b99b3?auto=format&fit=crop&w=400&h=800&q=80" 
+                    alt="Minimalist Gold Watch" 
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    style={{ aspectRatio: '2/3' }}
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-stone-900/10 to-transparent pointer-events-none" />
+                </div>
+                <div className="relative group overflow-hidden rounded-2xl shadow-md border" style={{ borderColor: 'rgba(237, 229, 216, 0.4)', transform: 'translateY(16px)' }}>
+                  <img 
+                    src="https://images.unsplash.com/photo-1549298916-b41d501d3772?auto=format&fit=crop&w=400&h=800&q=80" 
+                    alt="Leather Sneakers" 
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    style={{ aspectRatio: '2/3' }}
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-stone-900/10 to-transparent pointer-events-none" />
+                </div>
+                <div className="relative group overflow-hidden rounded-2xl shadow-md border" style={{ borderColor: 'rgba(237, 229, 216, 0.4)' }}>
+                  <img 
+                    src="https://images.unsplash.com/photo-1531297484001-80022131f5a1?auto=format&fit=crop&w=400&h=800&q=80" 
+                    alt="Sleek Laptop" 
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    style={{ aspectRatio: '2/3' }}
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-stone-900/10 to-transparent pointer-events-none" />
+                </div>
+              </div>
+            </div>
+
           </div>
         </div>
       </section>
 
-      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+      {/* ── FEATURED CATEGORIES GRID ─────────────────────────────── */}
+      <section className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-4">
+        <div className="flex items-end justify-between mb-6">
+          <div>
+            <p className="text-[10px] font-bold uppercase tracking-widest mb-1" style={{ color: '#C4A882' }}>Browse by</p>
+            <h2 className="text-2xl sm:text-3xl font-black" style={{ color: '#2C2416' }}>Featured Categories</h2>
+          </div>
+          <span className="text-xs font-semibold hidden sm:block" style={{ color: '#A08B70' }}>
+            Click a category to explore →
+          </span>
+        </div>
+
+        {/* Large top row: 3 cards */}
+        <div className="grid grid-cols-3 gap-3 sm:gap-4 mb-3 sm:mb-4">
+          {[
+            { cat: 'Shoes',       label: 'Curated Shoes',       sub: 'Everyday Elegance',  img: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=800&h=520&q=80' },
+            { cat: 'Watch',       label: 'Fine Watches',        sub: 'Timeless Precision',  img: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=800&h=520&q=80' },
+            { cat: 'Accessories', label: 'Accessories',         sub: 'Polish Your Look',    img: 'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?auto=format&fit=crop&w=800&h=520&q=80' },
+          ].map(({ cat, label, sub, img }) => (
+            <button
+              key={cat}
+              onClick={() => { setCategory(cat); document.getElementById('products-section')?.scrollIntoView({ behavior: 'smooth' }); }}
+              className="relative group overflow-hidden rounded-2xl cursor-pointer text-left"
+              style={{ height: '220px', boxShadow: '0 4px 24px rgba(44,36,22,0.10)' }}
+            >
+              <img src={img} alt={label} className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+              <div className="absolute inset-0 transition-opacity duration-300" style={{ background: 'linear-gradient(to top, rgba(44,36,22,0.75) 0%, rgba(44,36,22,0.10) 60%, transparent 100%)' }} />
+              <div className="absolute bottom-0 left-0 p-4 sm:p-5">
+                <p className="text-[10px] sm:text-xs font-semibold uppercase tracking-widest mb-1" style={{ color: 'rgba(255,220,150,0.85)' }}>{sub}</p>
+                <p className="text-sm sm:text-base md:text-lg font-black text-white leading-tight">{label}</p>
+              </div>
+              <div className="absolute inset-0 border-2 border-transparent group-hover:border-white/20 rounded-2xl transition-all duration-300" />
+            </button>
+          ))}
+        </div>
+
+        {/* Bottom row: 4 smaller cards */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
+          {[
+            { cat: 'Headphones', label: 'Headphones',  sub: 'Premium Audio',    img: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=600&h=400&q=80' },
+            { cat: 'Laptops',    label: 'Laptops',     sub: 'Powerful Machines', img: 'https://images.unsplash.com/photo-1531297484001-80022131f5a1?auto=format&fit=crop&w=600&h=400&q=80' },
+            { cat: 'Cameras',    label: 'Cameras',     sub: 'Capture Moments',   img: 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&w=600&h=400&q=80' },
+            { cat: 'Gaming',     label: 'Gaming',      sub: 'Level Up',          img: 'https://images.unsplash.com/photo-1600080972464-8e5f35f63d08?auto=format&fit=crop&w=600&h=400&q=80' },
+            { cat: 'Phone',      label: 'Phones',      sub: 'Stay Connected',    img: 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=600&h=400&q=80' },
+            { cat: 'Clothing',   label: 'Clothing',    sub: 'Define Your Style', img: 'https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?auto=format&fit=crop&w=600&h=400&q=80' },
+          ].map(({ cat, label, sub, img }) => (
+            <button
+              key={cat}
+              onClick={() => { setCategory(cat); document.getElementById('products-section')?.scrollIntoView({ behavior: 'smooth' }); }}
+              className="relative group overflow-hidden rounded-2xl cursor-pointer text-left"
+              style={{ height: '150px', boxShadow: '0 4px 24px rgba(44,36,22,0.10)' }}
+            >
+              <img src={img} alt={label} className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+              <div className="absolute inset-0 transition-opacity duration-300" style={{ background: 'linear-gradient(to top, rgba(44,36,22,0.72) 0%, rgba(44,36,22,0.05) 70%, transparent 100%)' }} />
+              <div className="absolute bottom-0 left-0 p-3 sm:p-4">
+                <p className="text-[9px] sm:text-[10px] font-semibold uppercase tracking-widest mb-0.5" style={{ color: 'rgba(255,220,150,0.85)' }}>{sub}</p>
+                <p className="text-xs sm:text-sm font-black text-white leading-tight">{label}</p>
+              </div>
+              <div className="absolute inset-0 border-2 border-transparent group-hover:border-white/20 rounded-2xl transition-all duration-300" />
+            </button>
+          ))}
+        </div>
+      </section>
+
+      {/* ── FILTER WORKSPACE + PRODUCTS ──────────────────────────── */}
+      <div id="products-section" className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
         {/* Filters */}
-        <div className="w-full bg-white dark:bg-slate-900/80 border border-slate-100 dark:border-slate-800/80 p-5 sm:p-6 rounded-2xl shadow-sm shadow-slate-200/50 dark:shadow-none mb-8 space-y-5 backdrop-blur-sm">
+
+        <div className="w-full p-5 sm:p-6 rounded-2xl mb-8 space-y-5" style={{ background: 'rgba(255,255,255,0.85)', border: '1px solid #EDE5D8', boxShadow: '0 2px 16px rgba(139,107,68,0.07)' }}>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-5 items-end">
             <div className="w-full space-y-1.5">
               <label className="text-[10px] sm:text-xs font-extrabold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
@@ -252,9 +356,9 @@ const Home = () => {
             </div>
 
             <div className="flex flex-col items-start w-full space-y-1.5">
-              <label className="text-[10px] sm:text-xs font-extrabold text-slate-400 dark:text-slate-500 uppercase tracking-wider flex justify-between w-full">
+              <label className="text-[10px] sm:text-xs font-extrabold uppercase tracking-wider flex justify-between w-full" style={{ color: '#A08B70' }}>
                 <span>Max Price</span>
-                <span className="text-purple-600 dark:text-purple-400 font-black">${priceRange}</span>
+                <span className="font-black" style={{ color: '#8B6914' }}>${priceRange}</span>
               </label>
               <input
                 type="range"
@@ -262,7 +366,8 @@ const Home = () => {
                 max={maxProductPrice || 1000}
                 value={priceRange}
                 onChange={(e) => setPriceRange(Number(e.target.value))}
-                className="w-full h-2 bg-slate-100 dark:bg-slate-800 rounded-full appearance-none cursor-pointer accent-purple-600 focus:outline-none"
+                className="w-full h-2 rounded-full appearance-none cursor-pointer focus:outline-none"
+                style={{ background: '#EDE5D8', accentColor: '#8B6914' }}
               />
             </div>
 
@@ -273,7 +378,8 @@ const Home = () => {
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
-                className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-800 rounded-xl px-3 py-3 text-xs sm:text-sm text-slate-700 dark:text-slate-300 font-semibold focus:outline-none focus:ring-2 focus:ring-purple-500/20 transition-all cursor-pointer"
+                className="w-full rounded-xl px-3 py-3 text-xs sm:text-sm font-semibold focus:outline-none transition-all cursor-pointer"
+                style={{ background: '#FAF7F2', border: '1px solid #EDE5D8', color: '#4A3D2C' }}
               >
                 <option value="Featured">Featured</option>
                 <option value="Price: Low to High">Price: Low to High</option>
@@ -285,56 +391,34 @@ const Home = () => {
             </div>
           </div>
 
-          <div className="pt-4 border-t border-slate-100 dark:border-slate-800">
-            <div className="flex items-center justify-between mb-3">
-              <span className="text-[10px] sm:text-xs font-extrabold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
-                Categories
-              </span>
-              {hasActiveFilters && (
-                <button
-                  onClick={clearFilters}
-                  className="text-[10px] sm:text-xs font-bold text-purple-600 dark:text-purple-400 hover:underline cursor-pointer"
-                >
-                  Clear filters
-                </button>
-              )}
-            </div>
-
-            <div className="w-full overflow-x-auto pb-1 scrollbar-none">
-              <div className="flex gap-2 min-w-max md:min-w-0 md:flex-wrap">
-                {CATEGORIES.map((cat) => (
-                  <button
-                    key={cat}
-                    onClick={() => setCategory(cat)}
-                    className={`whitespace-nowrap px-4 py-2 text-xs sm:px-5 sm:py-2.5 sm:text-sm font-bold rounded-full border transition-all duration-200 cursor-pointer ${
-                      category === cat
-                        ? "bg-purple-600 border-purple-600 text-white shadow-md shadow-purple-500/20 scale-[1.02]"
-                        : "bg-slate-50 dark:bg-slate-800 border-slate-100 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 hover:border-slate-200 dark:hover:border-slate-600"
-                    }`}
-                  >
-                    {cat}
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>
         </div>
 
         {/* Results header */}
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h2 className="text-lg sm:text-xl font-black text-slate-800 dark:text-slate-100">
-              {category === "All" ? "All Products" : category}
-            </h2>
-            <p className="text-xs sm:text-sm text-slate-400 dark:text-slate-500 mt-0.5">
+            <div className="flex items-center gap-3">
+              <h2 className="text-lg sm:text-xl font-black" style={{ color: '#2C2416' }}>
+                {category === "All" ? "All Products" : category}
+              </h2>
+              {category !== "All" && (
+                <button
+                  onClick={() => setCategory("All")}
+                  className="px-2.5 py-1 text-[10px] font-bold rounded-full border transition-all duration-200 cursor-pointer"
+                  style={{ background: '#FAF7F2', borderColor: '#E8DDD0', color: '#8B6914' }}
+                >
+                  Clear filter ×
+                </button>
+              )}
+            </div>
+            <p className="text-xs sm:text-sm mt-0.5" style={{ color: '#A08B70' }}>
               {initialLoading
                 ? "Loading catalog..."
                 : `${filtered.length} product${filtered.length !== 1 ? "s" : ""} found`}
             </p>
           </div>
           {refreshing && (
-            <span className="flex items-center gap-2 text-xs font-semibold text-purple-500 dark:text-purple-400">
-              <span className="w-3 h-3 border-2 border-purple-500 border-t-transparent rounded-full animate-spin" />
+            <span className="flex items-center gap-2 text-xs font-semibold" style={{ color: '#8B6914' }}>
+              <span className="w-3 h-3 border-2 border-t-transparent rounded-full animate-spin" style={{ borderColor: '#8B6914', borderTopColor: 'transparent' }} />
               Updating
             </span>
           )}
@@ -343,14 +427,14 @@ const Home = () => {
         {/* Products grid */}
         <div className="w-full">
           {initialLoading ? (
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-5 md:gap-6">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 md:gap-8">
               {Array.from({ length: 8 }).map((_, i) => (
                 <ProductCardSkeleton key={i} />
               ))}
             </div>
           ) : error ? (
-            <div className="text-center py-20 bg-white dark:bg-slate-800/20 border border-slate-100 dark:border-slate-800 rounded-3xl p-8 max-w-xl mx-auto shadow-sm">
-              <div className="w-14 h-14 mx-auto mb-4 rounded-2xl bg-red-50 dark:bg-red-950/30 flex items-center justify-center">
+            <div className="text-center py-20 rounded-3xl p-8 max-w-xl mx-auto" style={{ background: 'rgba(255,255,255,0.85)', border: '1px solid #EDE5D8', boxShadow: '0 2px 16px rgba(139,107,68,0.07)' }}>
+              <div className="w-14 h-14 mx-auto mb-4 rounded-2xl flex items-center justify-center" style={{ background: '#FEF2F2' }}>
                 <svg className="w-7 h-7 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                 </svg>
@@ -358,13 +442,14 @@ const Home = () => {
               <p className="text-red-500 font-bold">{error}</p>
               <button
                 onClick={() => fetchProducts(false)}
-                className="mt-4 px-5 py-2 text-sm font-bold text-white bg-purple-600 hover:bg-purple-700 rounded-xl transition-colors cursor-pointer"
+                className="mt-4 px-5 py-2 text-sm font-bold text-white rounded-xl transition-colors cursor-pointer"
+                style={{ background: '#8B6914' }}
               >
                 Try Again
               </button>
             </div>
           ) : filtered.length > 0 ? (
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-5 md:gap-6">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 md:gap-8">
               {filtered.map((p, i) => (
                 <div
                   key={p.id}
@@ -376,22 +461,23 @@ const Home = () => {
               ))}
             </div>
           ) : (
-            <div className="text-center py-20 bg-white dark:bg-slate-800/20 border border-slate-100 dark:border-slate-800 rounded-3xl p-8 max-w-xl mx-auto shadow-sm">
-              <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-slate-50 dark:bg-slate-800 flex items-center justify-center">
-                <svg className="w-8 h-8 text-slate-300 dark:text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <div className="text-center py-20 rounded-3xl p-8 max-w-xl mx-auto" style={{ background: 'rgba(255,255,255,0.85)', border: '1px solid #EDE5D8', boxShadow: '0 2px 16px rgba(139,107,68,0.07)' }}>
+              <div className="w-16 h-16 mx-auto mb-4 rounded-2xl flex items-center justify-center" style={{ background: '#FAF7F2' }}>
+                <svg className="w-8 h-8" style={{ color: '#C4A882' }} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </div>
-              <h3 className="text-base sm:text-lg font-bold text-slate-700 dark:text-slate-300">
+              <h3 className="text-base sm:text-lg font-bold" style={{ color: '#4A3D2C' }}>
                 No matching products
               </h3>
-              <p className="text-xs sm:text-sm text-slate-400 dark:text-slate-500 mt-1">
+              <p className="text-xs sm:text-sm mt-1" style={{ color: '#A08B70' }}>
                 Try adjusting your filters or search terms.
               </p>
               {hasActiveFilters && (
                 <button
                   onClick={clearFilters}
-                  className="mt-5 px-5 py-2 text-sm font-bold text-purple-600 dark:text-purple-400 border border-purple-200 dark:border-purple-800 rounded-xl hover:bg-purple-50 dark:hover:bg-purple-950/30 transition-colors cursor-pointer"
+                  className="mt-5 px-5 py-2 text-sm font-bold rounded-xl transition-colors cursor-pointer"
+                  style={{ color: '#8B6914', border: '1px solid #E8DDD0' }}
                 >
                   Reset Filters
                 </button>

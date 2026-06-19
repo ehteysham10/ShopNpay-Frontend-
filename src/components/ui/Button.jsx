@@ -11,14 +11,22 @@ const Button = ({
   isLoading = false,
   ...props
 }) => {
-  const baseStyle = "inline-flex items-center justify-center font-semibold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none transform active:scale-[0.98]";
+  const baseStyle = "inline-flex items-center justify-center font-semibold transition-all duration-200 focus:outline-none disabled:opacity-50 disabled:pointer-events-none transform active:scale-[0.98] cursor-pointer";
 
   const variants = {
-    primary: "bg-gradient-to-r from-blue-600 to-blue-400 text-white hover:from-blue-700 hover:to-blue-500 shadow-md shadow-blue-100 hover:shadow-lg hover:shadow-blue-200",
-    secondary: "bg-slate-100 text-slate-700 hover:bg-slate-200 focus:ring-slate-400",
-    outline: "border border-slate-200 text-slate-600 bg-white hover:bg-slate-50 hover:text-slate-800",
-    danger: "bg-red-500 text-white hover:bg-red-600 shadow-sm hover:shadow-md focus:ring-red-400",
-    ghost: "text-slate-600 hover:bg-slate-50 hover:text-slate-800 focus:ring-slate-400"
+    primary: "text-white shadow-md hover:shadow-lg",
+    secondary: "text-white hover:opacity-90",
+    outline: "border text-sm hover:opacity-90",
+    danger: "bg-red-500 text-white hover:bg-red-600 shadow-sm hover:shadow-md",
+    ghost: "hover:opacity-80"
+  };
+
+  const variantStyles = {
+    primary: { background: 'linear-gradient(135deg, #8B6914 0%, #C4954A 50%, #9A7820 100%)', boxShadow: '0 4px 14px rgba(139,105,20,0.30)' },
+    secondary: { background: '#6B5B45', color: '#FAF7F2' },
+    outline: { background: 'rgba(255,255,255,0.85)', borderColor: '#EDE5D8', color: '#4A3D2C' },
+    danger: {},
+    ghost: { color: '#6B5B45' }
   };
 
   const sizes = {
@@ -33,6 +41,7 @@ const Button = ({
       onClick={onClick}
       disabled={disabled || isLoading}
       className={`${baseStyle} ${variants[variant]} ${sizes[size]} ${className}`}
+      style={variantStyles[variant]}
       {...props}
     >
       {isLoading ? (
