@@ -6,6 +6,12 @@
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ShopNpay</title>
+  <!-- Preconnect to API backend (eliminates ~300-600ms TLS handshake) -->
+  <link rel="preconnect" href="https://shopnpay-backend.onrender.com" crossorigin />
+  <link rel="dns-prefetch" href="https://shopnpay-backend.onrender.com" />
+  <!-- Preconnect to image CDN -->
+  <link rel="preconnect" href="https://images.unsplash.com" crossorigin />
+  <link rel="dns-prefetch" href="https://images.unsplash.com" />
   <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 

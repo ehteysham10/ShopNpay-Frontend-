@@ -677,6 +677,7 @@ import { useState, useEffect, useContext, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { CartContext } from "../context/CartContext";
 import { toast } from "react-toastify";
+import Button from "../components/ui/Button";
 
 const Admin = () => {
   const { token, user, logout } = useContext(CartContext);
@@ -726,6 +727,16 @@ const Admin = () => {
     images: []
   });
 
+  const [imagePreviews, setImagePreviews] = useState([]);
+
+  // Cleanup object URLs when modal closes
+  useEffect(() => {
+    if (!isProductModalOpen) {
+      imagePreviews.forEach(url => URL.revokeObjectURL(url));
+      setImagePreviews([]);
+    }
+  }, [isProductModalOpen]);
+
   // Trackers to completely avoid component trigger loops
   const fetchingRef = useRef({ orders: false, products: false, users: false });
 
@@ -741,8 +752,10 @@ const Admin = () => {
       const result = await res.json();
       const ordersData = result?.data?.orders || result?.orders || [];
       setOrders(ordersData);
-      setTotalOrders(result?.totalCount || result?.total || ordersData.length);
-      setTotalOrdersPages(result?.totalPages || Math.ceil((result?.totalCount || ordersData.length) / ITEMS_PER_PAGE));
+      const total = result?.data?.total || result?.totalCount || result?.total || ordersData.length;
+      const totalPages = result?.data?.totalPages || result?.totalPages || Math.ceil(total / ITEMS_PER_PAGE);
+      setTotalOrders(total);
+      setTotalOrdersPages(totalPages);
     } catch (err) {
       console.error("Orders Fetch Error:", err);
     } finally {
@@ -758,8 +771,10 @@ const Admin = () => {
       const result = await res.json();
       const productsData = result?.data?.products || result?.products || [];
       setProductsList(productsData);
-      setTotalProducts(result?.totalCount || result?.total || productsData.length);
-      setTotalProductsPages(result?.totalPages || Math.ceil((result?.totalCount || productsData.length) / ITEMS_PER_PAGE));
+      const total = result?.data?.total || result?.totalCount || result?.total || productsData.length;
+      const totalPages = result?.data?.totalPages || result?.totalPages || Math.ceil(total / ITEMS_PER_PAGE);
+      setTotalProducts(total);
+      setTotalProductsPages(totalPages);
     } catch (err) {
       console.error("Products Fetch Error:", err);
     } finally {
@@ -921,32 +936,47 @@ const Admin = () => {
     e.preventDefault();
     setSubmittingProduct(true);
 
-    const formData = new FormData();
-    formData.append("title", productForm.title);
-    formData.append("price", Number(productForm.price));
-    formData.append("category", productForm.category);
-    formData.append("description", productForm.description);
-    productForm.images.forEach(img => formData.append("images", img));
+    try {
+      const formData = new FormData();
+      formData.append("title", productForm.title);
+      formData.append("price", Number(productForm.price));
+      formData.append("category", productForm.category);
+      formData.append("description", productForm.description);
+      
+      if (productForm.images && productForm.images.length > 0) {
+        productForm.images.forEach(img => formData.append("images", img));
+      }
 
-    const url = editingProduct ? `${API_URL}/products/${editingProduct.productId}` : `${API_URL}/products`;
-    const method = editingProduct ? "PATCH" : "POST";
+      const url = editingProduct ? `${API_URL}/products/${editingProduct.productId}` : `${API_URL}/products`;
+      const method = editingProduct ? "PATCH" : "POST";
 
-    const res = await fetch(url, {
-      method,
-      headers: { Authorization: `Bearer ${token}` },
-      body: formData
-    });
+      const res = await fetch(url, {
+        method,
+        headers: { Authorization: `Bearer ${token}` },
+        body: formData
+      });
 
-    if (res.ok) {
-      toast.success(editingProduct ? "Product updated successfully" : "Product created successfully");
-      fetchProducts();
-      setIsProductModalOpen(false);
-      setEditingProduct(null);
-    } else {
-      const data = await res.json();
-      toast.error(data.message || "Failed to save product");
+      let data = null;
+      try {
+        data = await res.json();
+      } catch (parseErr) {
+        // response is not valid JSON (e.g. gateway timeout HTML)
+      }
+
+      if (res.ok) {
+        toast.success(editingProduct ? "Product updated successfully" : "Product created successfully");
+        fetchProducts();
+        setIsProductModalOpen(false);
+        setEditingProduct(null);
+      } else {
+        toast.error(data?.message || `Failed to save product (Status: ${res.status}). Please try again.`);
+      }
+    } catch (err) {
+      console.error("Product submit error:", err);
+      toast.error("Failed to save product due to a network error or server timeout. If you are uploading large images, please try with smaller files.");
+    } finally {
+      setSubmittingProduct(false);
     }
-    setSubmittingProduct(false);
   };
 
   const openEditProduct = (p) => {
@@ -1371,14 +1401,76 @@ const Admin = () => {
                 />
               </div>
               <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider mb-1" style={{ color: '#A08B70' }}>Product Images</label>
+                {/* Existing Images (when editing) */}
+                {editingProduct && editingProduct.images && editingProduct.images.length > 0 && (
+                  <div className="mb-4">
+                    <label className="block text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: '#A08B70' }}>Current Images</label>
+                    <div className="flex flex-wrap gap-2">
+                      {editingProduct.images.map((img, idx) => (
+                        <div key={idx} className="relative w-16 h-16 rounded-lg overflow-hidden border" style={{ borderColor: '#EDE5D8' }}>
+                          <img src={img.url} alt="" className="w-full h-full object-cover" />
+                        </div>
+                      ))}
+                    </div>
+                    <p className="text-[10px] italic mt-1.5" style={{ color: '#A08B70' }}>Note: Uploading new images below will replace these.</p>
+                  </div>
+                )}
+
+                <label className="block text-xs font-semibold uppercase tracking-wider mb-1" style={{ color: '#A08B70' }}>Upload New Images (Max 5)</label>
+                
+                {/* Selected files preview */}
+                {imagePreviews && imagePreviews.length > 0 && (
+                  <div className="flex flex-wrap gap-2 mb-3">
+                    {imagePreviews.map((url, idx) => (
+                      <div key={idx} className="relative w-16 h-16 rounded-lg overflow-hidden border group" style={{ borderColor: '#EDE5D8' }}>
+                        <img src={url} alt="" className="w-full h-full object-cover" />
+                        <button
+                          type="button"
+                          onClick={() => {
+                            URL.revokeObjectURL(imagePreviews[idx]);
+                            const updatedFiles = productForm.images.filter((_, i) => i !== idx);
+                            const updatedPreviews = imagePreviews.filter((_, i) => i !== idx);
+                            setProductForm({ ...productForm, images: updatedFiles });
+                            setImagePreviews(updatedPreviews);
+                          }}
+                          className="absolute top-1 right-1 bg-rose-500 text-white rounded-full w-4 h-4 flex items-center justify-center text-[10px] hover:bg-rose-600 shadow-sm transition-all"
+                        >
+                          ✕
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                <div 
+                  className="border-2 border-dashed rounded-xl p-5 text-center cursor-pointer hover:bg-[#FAF7F2] transition-colors"
+                  style={{ borderColor: '#EDE5D8' }}
+                  onClick={() => document.getElementById('file-input').click()}
+                >
+                  <span className="text-2xl" style={{ color: '#8B6914' }}>📤</span>
+                  <p className="text-xs font-bold mt-1.5" style={{ color: '#2C2416' }}>Click to select images</p>
+                  <p className="text-[10px] mt-0.5" style={{ color: '#A08B70' }}>Supports up to 5 images (JPG, PNG, WEBP)</p>
+                </div>
                 <input
+                  id="file-input"
                   type="file"
                   multiple
                   accept="image/*"
-                  onChange={(e) => setProductForm({ ...productForm, images: Array.from(e.target.files) })}
-                  className="w-full text-xs cursor-pointer file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:bg-[#FEF3C7] file:text-[#8B6914] font-semibold"
-                  style={{ color: '#7A6A55' }}
+                  onChange={(e) => {
+                    const selected = Array.from(e.target.files || []);
+                    const nextFiles = [...productForm.images, ...selected].slice(0, 5);
+                    
+                    // Revoke old previews
+                    imagePreviews.forEach(url => URL.revokeObjectURL(url));
+                    
+                    // Create new previews
+                    const newPreviews = nextFiles.map(file => URL.createObjectURL(file));
+                    
+                    setProductForm({ ...productForm, images: nextFiles });
+                    setImagePreviews(newPreviews);
+                    e.target.value = ""; // Clear file input value to allow re-selection
+                  }}
+                  className="hidden"
                 />
               </div>
               <div className="pt-4 border-t flex justify-end space-x-2" style={{ borderColor: '#EDE5D8' }}>

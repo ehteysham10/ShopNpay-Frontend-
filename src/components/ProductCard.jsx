@@ -1,4 +1,5 @@
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect, useMemo } from "react";
+import { motion } from "framer-motion";
 import { CartContext } from "../context/CartContext";
 import { Link } from "react-router-dom";
 import Button from "./ui/Button";
@@ -16,13 +17,50 @@ const C = {
   catBg:      'rgba(255,255,255,0.88)',
 };
 
+const renderStars = (rating) => {
+  const score = Math.round(Number(rating || 0));
+  const filled = "★".repeat(Math.max(0, Math.min(5, score)));
+  const empty = "☆".repeat(Math.max(0, Math.min(5, 5 - score)));
+  return filled + empty;
+};
+
 const ProductCard = ({ product }) => {
   const { addToCart, wishlist, toggleWishlist, isCartOpen, toggleCart, token } = useContext(CartContext);
   const [imgLoaded, setImgLoaded] = useState(false);
+  const [reviews, setReviews] = useState([]);
+  const [loadingReviews, setLoadingReviews] = useState(true);
+
+  const targetId = product?.productId || product?.id || product?._id;
+
+  useEffect(() => {
+    let active = true;
+    const fetchReviews = async () => {
+      if (!targetId) return;
+      try {
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/products/${targetId}/reviews`);
+        const result = await res.json();
+        if (active && res.ok && (result.success || result.status === "success")) {
+          setReviews(result.data || []);
+        }
+      } catch (err) {
+        console.error("Failed to fetch reviews for card:", err);
+      } finally {
+        if (active) setLoadingReviews(false);
+      }
+    };
+    fetchReviews();
+    return () => { active = false; };
+  }, [targetId]);
+
+  const averageRating = useMemo(() => {
+    if (!reviews || reviews.length === 0) return null;
+    const sum = reviews.reduce((acc, r) => acc + (r.rating || 0), 0);
+    return sum / reviews.length;
+  }, [reviews]);
+
+  const displayRating = product.rating || averageRating;
 
   if (!product) return null;
-
-  const targetId = product.productId || product.id || product._id;
 
   const isFavorited = wishlist.some(
     (item) =>
@@ -44,7 +82,11 @@ const ProductCard = ({ product }) => {
   const displayImage = product.image || (product.images && product.images[0]?.url) || "";
 
   return (
-    <div
+    <motion.div
+      initial={{ opacity: 0, y: 40 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "0px 0px -50px 0px" }}
+      transition={{ duration: 0.5, ease: "easeOut" }}
       className="group w-full h-full rounded-2xl overflow-hidden flex flex-col relative transition-all duration-300 hover:-translate-y-1.5"
       style={{
         background: C.card,
@@ -84,7 +126,7 @@ const ProductCard = ({ product }) => {
 
       {/* Image area */}
       <div
-        className="relative overflow-hidden h-44 sm:h-52 md:h-56 flex items-center justify-center p-4"
+        className="relative overflow-hidden h-44 sm:h-52 md:h-56 w-full flex items-center justify-center"
         style={{ background: C.bgImg }}
       >
         {!imgLoaded && <div className="absolute inset-0 shimmer" />}
@@ -95,7 +137,7 @@ const ProductCard = ({ product }) => {
             loading="lazy"
             decoding="async"
             onLoad={() => setImgLoaded(true)}
-            className={`w-full h-full object-contain transition-all duration-500 group-hover:scale-108 ${
+            className={`w-full h-full object-cover transition-all duration-500 group-hover:scale-108 ${
               imgLoaded ? "opacity-100" : "opacity-0"
             }`}
             style={{ transform: imgLoaded ? undefined : 'scale(1)' }}
@@ -126,16 +168,19 @@ const ProductCard = ({ product }) => {
           <p className="text-[11px] sm:text-xs mt-1 line-clamp-2 leading-relaxed" style={{ color: C.textSubtle }}>
             {product.description || "Premium quality build"}
           </p>
-          {product.rating && (
-            <div className="flex items-center gap-1 mt-1.5">
-              <div className="flex text-amber-500 text-[10px]">
-                {"★".repeat(Math.floor(product.rating))}
-                {product.rating % 1 >= 0.5 ? "★" : ""}
-              </div>
-              <span className="text-[10px] font-semibold" style={{ color: C.textSubtle }}>
-                {product.rating}
+          {displayRating && displayRating > 0 ? (
+            <div className="flex items-center gap-1.5 mt-1.5">
+              <span className="text-amber-500 text-[11px] sm:text-xs tracking-wider">
+                {renderStars(displayRating)}
+              </span>
+              <span className="text-[10px] sm:text-[11px] font-bold" style={{ color: C.text }}>
+                {Number(displayRating).toFixed(1)}
               </span>
             </div>
+          ) : (
+            <p className="text-[10px] font-semibold italic mt-1.5" style={{ color: C.textSubtle }}>
+              No reviews yet
+            </p>
           )}
         </div>
 
@@ -158,7 +203,7 @@ const ProductCard = ({ product }) => {
           </Button>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 

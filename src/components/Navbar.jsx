@@ -1,4 +1,5 @@
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { Link, useLocation } from "react-router-dom";
 import { CartContext } from "../context/CartContext";
 
@@ -22,6 +23,16 @@ const Navbar = () => {
   const location = useLocation();
   const currentPath = location.pathname;
 
+  // Lock body scroll when mobile menu is open
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+    return () => { document.body.style.overflow = "unset"; };
+  }, [isOpen]);
+
   const cartCount = cart.reduce((total, item) => total + (item.qty || item.quantity || 0), 0);
 
   const getLinkStyle = (path) => {
@@ -35,7 +46,7 @@ const Navbar = () => {
   return (
     <div className="w-full sticky top-0 z-45 px-4 sm:px-6 lg:px-8 pt-4 pb-2" style={{ background: 'transparent' }}>
       <nav
-        className="max-w-7xl mx-auto rounded-2xl border backdrop-blur-md transition-all duration-300"
+        className="max-w-7xl mx-auto rounded-2xl border backdrop-blur-md transition-all duration-300 relative"
         style={{
           background: 'rgba(253, 252, 251, 0.75)',
           borderColor: 'rgba(237, 229, 216, 0.7)',
@@ -206,108 +217,114 @@ const Navbar = () => {
           </div>
         </div>
 
-        {/* MOBILE MENU */}
-        {isOpen && (
-          <div
-            className="md:hidden border-t px-4 pt-3 pb-5 space-y-3 text-left font-semibold text-sm animate-fade-in rounded-b-2xl"
-            style={{ background: C.nav, borderColor: C.border, color: C.textMuted }}
-          >
-            <Link
-              to="/"
-              onClick={() => setIsOpen(false)}
-              className="block py-2 border-b font-bold"
-              style={{ color: currentPath === "/" ? C.accent : C.textMuted, borderColor: C.border }}
+        {/* MOBILE MENU (OVERLAY DROPDOWN) */}
+        <AnimatePresence>
+          {isOpen && (
+            <motion.div
+              initial={{ opacity: 0, y: -10, scale: 0.98 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -10, scale: 0.98 }}
+              transition={{ duration: 0.2, ease: "easeOut" }}
+              className="md:hidden absolute top-[calc(100%+8px)] left-0 w-full px-4 pt-3 pb-5 space-y-3 text-left font-semibold text-sm rounded-2xl shadow-2xl border backdrop-blur-xl z-50"
+              style={{ background: 'rgba(253, 252, 251, 0.95)', borderColor: C.border, color: C.textMuted }}
             >
-              Home
-            </Link>
-            <Link
-              to="/wishlist"
-              onClick={() => setIsOpen(false)}
-              className="block py-2 border-b hover:opacity-70 font-semibold"
-              style={{ color: currentPath === "/wishlist" ? C.accent : C.textMuted, borderColor: C.border }}
-            >
-              Wishlist
-            </Link>
-            <Link
-              to="/cart"
-              onClick={() => setIsOpen(false)}
-              className="flex items-center justify-between py-2 border-b hover:opacity-70 font-semibold"
-              style={{ color: currentPath === "/cart" ? C.accent : C.textMuted, borderColor: C.border }}
-            >
-              <span>Cart</span>
-              {cartCount > 0 && (
-                <span className="font-bold text-xs px-2 py-0.5 rounded-full text-white" style={{ background: C.accent }}>
-                  {cartCount}
-                </span>
-              )}
-            </Link>
-            <Link
-              to="/checkout"
-              onClick={() => setIsOpen(false)}
-              className="block py-2 border-b hover:opacity-70 font-semibold"
-              style={{ color: currentPath === "/checkout" ? C.accent : C.textMuted, borderColor: C.border }}
-            >
-              Checkout
-            </Link>
-            {user && (
               <Link
-                to="/orders"
+                to="/"
+                onClick={() => setIsOpen(false)}
+                className="block py-2 border-b font-bold"
+                style={{ color: currentPath === "/" ? C.accent : C.textMuted, borderColor: C.border }}
+              >
+                Home
+              </Link>
+              <Link
+                to="/wishlist"
                 onClick={() => setIsOpen(false)}
                 className="block py-2 border-b hover:opacity-70 font-semibold"
-                style={{ color: currentPath === "/orders" ? C.accent : C.textMuted, borderColor: C.border }}
+                style={{ color: currentPath === "/wishlist" ? C.accent : C.textMuted, borderColor: C.border }}
               >
-                My Orders
+                Wishlist
               </Link>
-            )}
-
-            {user ? (
-              <div className="pt-2 border-t space-y-2" style={{ borderColor: C.border }}>
-                <div className="flex items-center gap-3 px-1 py-2">
-                  {user.avatar ? (
-                    <img src={user.avatar} alt={user.name} className="w-10 h-10 rounded-full border-2" style={{ borderColor: C.accent }} />
-                  ) : (
-                    <div className="w-10 h-10 rounded-full text-white flex items-center justify-center font-bold" style={{ background: 'linear-gradient(135deg, #8B6914, #C4954A)' }}>
-                      {user.name ? user.name.charAt(0).toUpperCase() : "U"}
-                    </div>
-                  )}
-                  <div>
-                    <p className="text-sm font-bold" style={{ color: C.text }}>{user.name}</p>
-                    <p className="text-xs truncate" style={{ color: C.textSubtle }}>{user.email}</p>
-                  </div>
-                </div>
-
-                {user.role === "admin" && (
-                  <Link
-                    to="/admin"
-                    onClick={() => setIsOpen(false)}
-                    className="block text-center font-bold px-4 py-2.5 rounded-xl border transition-colors"
-                    style={{ color: C.accent, borderColor: C.border, background: C.accentBg }}
-                  >
-                    Admin Dashboard
-                  </Link>
+              <Link
+                to="/cart"
+                onClick={() => setIsOpen(false)}
+                className="flex items-center justify-between py-2 border-b hover:opacity-70 font-semibold"
+                style={{ color: currentPath === "/cart" ? C.accent : C.textMuted, borderColor: C.border }}
+              >
+                <span>Cart</span>
+                {cartCount > 0 && (
+                  <span className="font-bold text-xs px-2 py-0.5 rounded-full text-white" style={{ background: C.accent }}>
+                    {cartCount}
+                  </span>
                 )}
-
-                <button
-                  onClick={() => { logout(); setIsOpen(false); }}
-                  className="w-full text-center text-red-500 font-bold px-4 py-2.5 rounded-xl border border-red-100 hover:bg-red-50 transition-colors cursor-pointer"
-                >
-                  Logout
-                </button>
-              </div>
-            ) : (
-              <div className="pt-2">
+              </Link>
+              <Link
+                to="/checkout"
+                onClick={() => setIsOpen(false)}
+                className="block py-2 border-b hover:opacity-70 font-semibold"
+                style={{ color: currentPath === "/checkout" ? C.accent : C.textMuted, borderColor: C.border }}
+              >
+                Checkout
+              </Link>
+              {user && (
                 <Link
-                  to="/login"
+                  to="/orders"
                   onClick={() => setIsOpen(false)}
-                  className="block text-center font-bold px-4 py-2.5 rounded-xl text-white transition-opacity hover:opacity-80"
-                  style={{ background: 'linear-gradient(135deg, #8B6914, #C4954A)' }}
+                  className="block py-2 border-b hover:opacity-70 font-semibold"
+                  style={{ color: currentPath === "/orders" ? C.accent : C.textMuted, borderColor: C.border }}
                 >
-                  Login
+                  My Orders
                 </Link>
-              </div>
-            )}
-          </div>
-        )}
+              )}
+
+              {user ? (
+                <div className="pt-2 border-t space-y-2" style={{ borderColor: C.border }}>
+                  <div className="flex items-center gap-3 px-1 py-2">
+                    {user.avatar ? (
+                      <img src={user.avatar} alt={user.name} className="w-10 h-10 rounded-full border-2" style={{ borderColor: C.accent }} />
+                    ) : (
+                      <div className="w-10 h-10 rounded-full text-white flex items-center justify-center font-bold" style={{ background: 'linear-gradient(135deg, #8B6914, #C4954A)' }}>
+                        {user.name ? user.name.charAt(0).toUpperCase() : "U"}
+                      </div>
+                    )}
+                    <div>
+                      <p className="text-sm font-bold" style={{ color: C.text }}>{user.name}</p>
+                      <p className="text-xs truncate" style={{ color: C.textSubtle }}>{user.email}</p>
+                    </div>
+                  </div>
+
+                  {user.role === "admin" && (
+                    <Link
+                      to="/admin"
+                      onClick={() => setIsOpen(false)}
+                      className="block text-center font-bold px-4 py-2.5 rounded-xl border transition-colors"
+                      style={{ color: C.accent, borderColor: C.border, background: C.accentBg }}
+                    >
+                      Admin Dashboard
+                    </Link>
+                  )}
+
+                  <button
+                    onClick={() => { logout(); setIsOpen(false); }}
+                    className="w-full text-center text-red-500 font-bold px-4 py-2.5 rounded-xl border border-red-100 hover:bg-red-50 transition-colors cursor-pointer"
+                  >
+                    Logout
+                  </button>
+                </div>
+              ) : (
+                <div className="pt-2">
+                  <Link
+                    to="/login"
+                    onClick={() => setIsOpen(false)}
+                    className="block text-center font-bold px-4 py-2.5 rounded-xl text-white transition-opacity hover:opacity-80"
+                    style={{ background: 'linear-gradient(135deg, #8B6914, #C4954A)' }}
+                  >
+                    Login
+                  </Link>
+                </div>
+              )}
+            </motion.div>
+          )}
+        </AnimatePresence>
       </nav>
     </div>
   );
