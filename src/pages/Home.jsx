@@ -8,8 +8,6 @@ import Input from "../components/ui/Input";
 const API_URL = import.meta.env.VITE_API_URL;
 const CACHE_KEY = "shopnpay_products_cache";
 const CACHE_TTL = 10 * 60 * 1000; // 10 min cache
-const WARM_KEY = "shopnpay_last_warm";
-const WARM_INTERVAL = 4 * 60 * 1000; // re-warm every 4 min
 
 const CATEGORIES = [
   "All",
@@ -70,13 +68,7 @@ const writeCache = (products) => {
   }
 };
 
-// Wake up Render backend early (fire-and-forget)
-const warmBackend = () => {
-  const last = Number(sessionStorage.getItem(WARM_KEY) || 0);
-  if (Date.now() - last < WARM_INTERVAL) return;
-  sessionStorage.setItem(WARM_KEY, String(Date.now()));
-  fetch(`${API_URL}/products?limit=1`, { method: "GET", priority: "low" }).catch(() => {});
-};
+// Note: backend warm-up ping is fired from main.jsx before React renders.
 
 const Home = () => {
   const cachedData = useRef(readCache());
@@ -99,10 +91,13 @@ const Home = () => {
   const [initialLoading, setInitialLoading] = useState(() => !cachedData.current);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState("");
+  // Show a friendly banner if the server takes > 4s (Render cold-start)
+  const [slowLoad, setSlowLoad] = useState(false);
 
   const hasDataRef = useRef(!!cachedData.current);
   const fetchControllerRef = useRef(null);
   const isFirstRender = useRef(true);
+  const slowTimerRef = useRef(null);
 
   // Debounce search
   useEffect(() => {
@@ -212,12 +207,26 @@ const Home = () => {
     }
   }, [category, debouncedSearch, sortBy, debouncedPriceRange, maxProductPrice]);
 
-  // On mount: warm backend + fetch initial page (background if cached)
+  // On mount: fetch initial page (background if cached); show slow-load banner after 4s
   useEffect(() => {
-    warmBackend();
     fetchProducts({ isBackground: !!cachedData.current, cursor: null, reset: true });
-    return () => fetchControllerRef.current?.abort();
+    // If no cached data, show a "server waking up" message after 4s
+    if (!cachedData.current) {
+      slowTimerRef.current = setTimeout(() => setSlowLoad(true), 4000);
+    }
+    return () => {
+      fetchControllerRef.current?.abort();
+      clearTimeout(slowTimerRef.current);
+    };
   }, []);
+
+  // Clear the slow-load banner once data arrives
+  useEffect(() => {
+    if (!initialLoading) {
+      setSlowLoad(false);
+      clearTimeout(slowTimerRef.current);
+    }
+  }, [initialLoading]);
 
   // On filter/sort change: refetch first page (except on mount)
   useEffect(() => {
@@ -598,10 +607,27 @@ const Home = () => {
         {/* Products grid */}
         <div className="w-full">
           {initialLoading ? (
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 md:gap-8">
-              {Array.from({ length: 8 }).map((_, i) => (
-                <ProductCardSkeleton key={i} />
-              ))}
+            <div>
+              {slowLoad && (
+                <div
+                  className="flex items-center gap-3 px-5 py-3.5 rounded-2xl mb-6 text-sm font-semibold"
+                  style={{ background: 'rgba(196,168,130,0.12)', border: '1px solid rgba(196,168,130,0.35)', color: '#7A5C2E' }}
+                >
+                  <span
+                    className="w-4 h-4 rounded-full border-2 border-t-transparent animate-spin flex-shrink-0"
+                    style={{ borderColor: '#C4A882', borderTopColor: 'transparent' }}
+                  />
+                  <span>
+                    Server is waking up — this only takes a moment on first visit.&nbsp;
+                    <span style={{ color: '#A08B70', fontWeight: 400 }}>Hang tight…</span>
+                  </span>
+                </div>
+              )}
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 md:gap-8">
+                {Array.from({ length: 8 }).map((_, i) => (
+                  <ProductCardSkeleton key={i} />
+                ))}
+              </div>
             </div>
           ) : error ? (
             <div className="text-center py-20 rounded-3xl p-8 max-w-xl mx-auto" style={{ background: 'rgba(255,255,255,0.85)', border: '1px solid #EDE5D8', boxShadow: '0 2px 16px rgba(139,107,68,0.07)' }}>
