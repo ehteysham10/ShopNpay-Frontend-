@@ -1410,6 +1410,45 @@ const CartProvider = ({ children }) => {
     localStorage.setItem("appliedCoupon", JSON.stringify(appliedCoupon));
   }, [appliedCoupon]);
 
+  // ── Auto-logout when stored token is expired ──
+  // Runs once on app load. Decodes the JWT's `exp` field (no library needed —
+  // JWTs are just base64-encoded JSON). If token is stale, silently clears
+  // state so the user sees the logged-out UI immediately instead of hitting
+  // "invalid token" errors when they try to do something.
+  useEffect(() => {
+    const storedToken = localStorage.getItem("token");
+    if (!storedToken) return;
+
+    try {
+      // JWT structure: header.payload.signature (all base64url encoded)
+      const payloadBase64 = storedToken.split(".")[1];
+      const payload = JSON.parse(atob(payloadBase64));
+      const isExpired = payload.exp && Date.now() / 1000 > payload.exp;
+
+      if (isExpired) {
+        // Clear all auth data silently
+        setToken(null);
+        setUser(null);
+        setCart([]);
+        setWishlist([]);
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        localStorage.removeItem("cart");
+        localStorage.removeItem("wishlist");
+        // Friendly toast — not a scary error
+        toast.info("Your session has expired. Please log in again.", {
+          toastId: "session-expired", // prevents duplicate toasts
+        });
+      }
+    } catch {
+      // Malformed token — clear it quietly
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      setToken(null);
+      setUser(null);
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
   // Sync cart and wishlist from backend on login securely
   useEffect(() => {
     if (token) {
