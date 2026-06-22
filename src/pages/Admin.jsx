@@ -767,12 +767,12 @@ const Admin = () => {
     if (fetchingRef.current.products) return;
     fetchingRef.current.products = true;
     try {
-      const res = await fetch(`${API_URL}/products?page=${productsPage}&limit=${ITEMS_PER_PAGE}&sort=${productsSort}`);
+      const res = await fetch(`${API_URL}/products?page=${productsPage}&limit=1000&sort=${productsSort}`);
       const result = await res.json();
       const productsData = result?.data?.products || result?.products || [];
       setProductsList(productsData);
       const total = result?.data?.total || result?.totalCount || result?.total || productsData.length;
-      const totalPages = result?.data?.totalPages || result?.totalPages || Math.ceil(total / ITEMS_PER_PAGE);
+      const totalPages = result?.data?.totalPages || result?.totalPages || Math.ceil(total / 1000);
       setTotalProducts(total);
       setTotalProductsPages(totalPages);
     } catch (err) {

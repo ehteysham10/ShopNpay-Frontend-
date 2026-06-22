@@ -1,9 +1,11 @@
 import { useParams, Link } from "react-router-dom";
 import { useState, useContext, useEffect, useMemo, useRef, useCallback } from "react";
 import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
 import { CartContext } from "../context/CartContext";
 import Button from "../components/ui/Button";
 import ProductCard from "../components/ProductCard";
+import RecentlyViewed, { saveRecentlyViewed } from "../components/RecentlyViewed";
 
 const Product = () => {
   const { id } = useParams();
@@ -120,6 +122,7 @@ const Product = () => {
           const norm = normalizeProduct(raw);
 
           setProduct(norm);
+          saveRecentlyViewed(norm);
           setCurrentImgIndex(0);
 
           // Related Products Fetch
@@ -143,11 +146,26 @@ const Product = () => {
                   rawProducts = relResult.data.products;
                 }
 
-                const filtered = rawProducts
+                const normalizedList = rawProducts
                   .map(normalizeProduct)
                   .filter((p) => p && p.productId !== norm.productId);
 
-                setRelated(filtered);
+                // De-duplicate related products safely
+                const uniqueRelated = [];
+                const seenRelatedIds = new Set();
+                for (const item of normalizedList) {
+                  const itemId = item.id || item.productId || item._id;
+                  if (itemId) {
+                    if (!seenRelatedIds.has(itemId)) {
+                      seenRelatedIds.add(itemId);
+                      uniqueRelated.push(item);
+                    }
+                  } else {
+                    uniqueRelated.push(item);
+                  }
+                }
+
+                setRelated(uniqueRelated);
               }
             } catch (relErr) {
               console.error("Related products fetch failed silently:", relErr);
@@ -551,27 +569,27 @@ const Product = () => {
           {token && (
             <form
               onSubmit={handleAddReview}
-              className="mt-6 space-y-3 p-4 rounded-xl"
+              className="mt-6 space-y-4 p-5 rounded-2xl text-left"
               style={{ background: '#FAF7F2', border: '1px solid #EDE5D8' }}
             >
-              <h3 className="text-sm font-bold">Write a Review</h3>
+              <h3 className="text-sm font-black uppercase tracking-wider text-stone-700">Write a Review</h3>
               <div>
-                <label className="text-xs text-slate-400 block mb-1">Rating</label>
-                <select
-                  value={reviewForm.rating}
-                  onChange={(e) => setReviewForm({ ...reviewForm, rating: e.target.value })}
-                  className="p-1.5 rounded-md text-sm"
-                  style={{ border: '1px solid #EDE5D8', background: '#FFFFFF', color: '#2C2416' }}
-                >
-                  <option value="5">5 Stars</option>
-                  <option value="4">4 Stars</option>
-                  <option value="3">3 Stars</option>
-                  <option value="2">2 Stars</option>
-                  <option value="1">1 Star</option>
-                </select>
+                <label className="text-xs text-stone-500 font-bold block mb-1">Rating</label>
+                <div className="flex gap-1.5">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <button
+                      key={star}
+                      type="button"
+                      onClick={() => setReviewForm({ ...reviewForm, rating: star })}
+                      className="text-2xl transition-all duration-150 hover:scale-125 focus:outline-none cursor-pointer"
+                    >
+                      <span style={{ color: star <= reviewForm.rating ? '#F59E0B' : '#D1D5DB' }}>★</span>
+                    </button>
+                  ))}
+                </div>
               </div>
               <div>
-                <label className="text-xs text-slate-400 block mb-1">Comment</label>
+                <label className="text-xs text-stone-500 font-bold block mb-1">Comment</label>
                 <textarea
                   value={reviewForm.comment}
                   onChange={(e) =>
@@ -582,12 +600,12 @@ const Product = () => {
                   }
                   rows="3"
                   placeholder="Share your thoughts about this product..."
-                  className="w-full p-2.5 rounded-lg text-sm focus:outline-none"
+                  className="w-full p-3 rounded-xl text-sm focus:outline-none focus:ring-1 focus:ring-amber-500"
                   style={{ border: '1px solid #EDE5D8', background: '#FFFFFF', color: '#2C2416' }}
                 />
               </div>
 
-              <Button type="submit" className="px-4 py-2 text-xs font-bold">
+              <Button type="submit" className="px-5 py-2.5 text-xs font-bold" disabled={submittingReview}>
                 {submittingReview ? "Posting..." : "Post Review"}
               </Button>
             </form>
@@ -597,7 +615,7 @@ const Product = () => {
         {/* RELATED PRODUCTS */}
         {related && related.length > 0 && (
           <div className="mt-16 pt-8" style={{ borderTop: '1px solid #EDE5D8' }}>
-            <h2 className="text-2xl font-extrabold mb-6" style={{ color: '#2C2416' }}>
+            <h2 className="text-2xl font-extrabold mb-6 text-left" style={{ color: '#2C2416' }}>
               Related Products
             </h2>
 
@@ -608,7 +626,13 @@ const Product = () => {
             </div>
           </div>
         )}
+
+        {/* RECENTLY VIEWED */}
+        <div className="mt-16 pt-8" style={{ borderTop: '1px solid #EDE5D8' }}>
+          <RecentlyViewed excludeId={product.productId} />
+        </div>
       </div>
+      <Footer />
     </div>
   );
 };

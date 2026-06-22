@@ -160,6 +160,14 @@ const Navbar = () => {
                         <p className="text-sm font-bold truncate mt-0.5" style={{ color: C.text }}>{user.email}</p>
                       </div>
                       <Link
+                        to="/profile"
+                        onClick={() => setShowUserDropdown(false)}
+                        className="block px-4 py-2.5 text-sm transition-colors hover:bg-stone-50"
+                        style={{ color: C.textMuted }}
+                      >
+                        My Profile
+                      </Link>
+                      <Link
                         to="/orders"
                         onClick={() => setShowUserDropdown(false)}
                         className="block px-4 py-2.5 text-sm transition-colors hover:bg-stone-50"
@@ -291,6 +299,15 @@ const Navbar = () => {
                       <p className="text-xs truncate" style={{ color: C.textSubtle }}>{user.email}</p>
                     </div>
                   </div>
+
+                  <Link
+                    to="/profile"
+                    onClick={() => setIsOpen(false)}
+                    className="block text-center font-bold px-4 py-2.5 rounded-xl border transition-colors"
+                    style={{ color: C.textMuted, borderColor: C.border }}
+                  >
+                    My Profile
+                  </Link>
 
                   {user.role === "admin" && (
                     <Link

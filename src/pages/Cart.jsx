@@ -1,9 +1,11 @@
 import { useContext, useState } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
 import { CartContext } from "../context/CartContext";
 import Button from "../components/ui/Button";
 import Input from "../components/ui/Input";
+import RecentlyViewed from "../components/RecentlyViewed";
 
 const Cart = () => {
   const {
@@ -202,7 +204,13 @@ const Cart = () => {
             </div>
           </div>
         )}
+
+        {/* RECENTLY VIEWED */}
+        <div className="mt-16 pt-8" style={{ borderTop: '1px solid #EDE5D8' }}>
+          <RecentlyViewed title="You Might Also Like" />
+        </div>
       </main>
+      <Footer />
     </div>
   );
 };

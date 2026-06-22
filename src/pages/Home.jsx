@@ -1,9 +1,11 @@
 import { useState, useEffect, useMemo, useCallback, useRef, lazy, Suspense } from "react";
 import { motion } from "framer-motion";
 import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
 import ProductCard from "../components/ProductCard";
 import ProductCardSkeleton from "../components/ProductCardSkeleton";
 import Input from "../components/ui/Input";
+import { useSearchParams } from "react-router-dom";
 
 const API_URL = import.meta.env.VITE_API_URL;
 const CACHE_KEY = "shopnpay_products_cache";
@@ -79,6 +81,42 @@ const Home = () => {
   const [productsList, setProductsList] = useState(() => cachedData.current || []);
   const [priceRange, setPriceRange] = useState(1000);
   const [debouncedPriceRange, setDebouncedPriceRange] = useState(1000);
+
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  // Sync category & search state from URL search parameters
+  useEffect(() => {
+    const categoryParam = searchParams.get("category");
+    if (categoryParam) {
+      const matched = CATEGORIES.find(
+        (cat) => cat.toLowerCase() === categoryParam.toLowerCase()
+      );
+      if (matched) {
+        setCategory(matched);
+      } else {
+        setCategory("All");
+      }
+    } else {
+      setCategory("All");
+    }
+
+    const searchParam = searchParams.get("search");
+    if (searchParam) {
+      setSearch(searchParam);
+    } else {
+      setSearch("");
+    }
+  }, [searchParams]);
+
+  const changeCategory = (cat) => {
+    const newParams = new URLSearchParams(searchParams);
+    if (cat === "All") {
+      newParams.delete("category");
+    } else {
+      newParams.set("category", cat);
+    }
+    setSearchParams(newParams);
+  };
 
   // Pagination states
   const [nextCursor, setNextCursor] = useState(null);
@@ -285,6 +323,7 @@ const Home = () => {
     setCategory("All");
     setSortBy("Featured");
     setPriceRange(maxProductPrice || 1000);
+    setSearchParams({});
   };
 
   return (
@@ -459,7 +498,7 @@ const Home = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "0px 0px -50px 0px" }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
-              onClick={() => { setCategory(cat); document.getElementById('products-section')?.scrollIntoView({ behavior: 'smooth' }); }}
+              onClick={() => { changeCategory(cat); document.getElementById('products-section')?.scrollIntoView({ behavior: 'smooth' }); }}
               className="relative group overflow-hidden rounded-2xl cursor-pointer text-left"
               style={{ height: '220px', boxShadow: '0 4px 24px rgba(44,36,22,0.10)' }}
             >
@@ -490,7 +529,7 @@ const Home = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "0px 0px -50px 0px" }}
               transition={{ duration: 0.5, delay: index * 0.05 }}
-              onClick={() => { setCategory(cat); document.getElementById('products-section')?.scrollIntoView({ behavior: 'smooth' }); }}
+              onClick={() => { changeCategory(cat); document.getElementById('products-section')?.scrollIntoView({ behavior: 'smooth' }); }}
               className="relative group overflow-hidden rounded-2xl cursor-pointer text-left"
               style={{ height: '150px', boxShadow: '0 4px 24px rgba(44,36,22,0.10)' }}
             >
@@ -582,7 +621,7 @@ const Home = () => {
               </h2>
               {category !== "All" && (
                 <button
-                  onClick={() => setCategory("All")}
+                  onClick={() => changeCategory("All")}
                   className="px-2.5 py-1 text-[10px] font-bold rounded-full border transition-all duration-200 cursor-pointer"
                   style={{ background: '#FAF7F2', borderColor: '#E8DDD0', color: '#8B6914' }}
                 >
@@ -704,6 +743,7 @@ const Home = () => {
           )}
         </div>
       </div>
+      <Footer />
     </div>
   );
 };

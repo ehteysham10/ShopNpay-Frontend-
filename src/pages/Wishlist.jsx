@@ -4,20 +4,14 @@ import ProductCard from "../components/ProductCard";
 import { CartContext } from "../context/CartContext";
 import { Link } from "react-router-dom";
 import Button from "../components/ui/Button";
-import { products } from "../data/products";
+import Footer from "../components/Footer";
 
 const Wishlist = () => {
   const { wishlist } = useContext(CartContext);
 
-  // Resolve ID array to full product objects (backward compatible with objects)
-  const wishlistProducts = wishlist
-    .map((item) => {
-      if (item && typeof item === "object") {
-        return item;
-      }
-      return products.find((p) => p.id === item);
-    })
-    .filter((p) => p !== undefined);
+  // Wishlist is already an array of normalized product objects from the API (via CartContext).
+  // Filter out any null/invalid entries defensively.
+  const wishlistProducts = wishlist.filter((item) => item && typeof item === "object" && item.id);
 
   return (
     <div className="min-h-screen flex flex-col" style={{ background: '#FAFAF8', color: '#2C2416' }}>
@@ -48,13 +42,15 @@ const Wishlist = () => {
             </Link>
           </div>
         ) : (
-          <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-8">
+          <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
             {wishlistProducts.map((item) => (
               <ProductCard key={item.id} product={item} />
             ))}
           </div>
         )}
       </main>
+
+      <Footer />
     </div>
   );
 };
