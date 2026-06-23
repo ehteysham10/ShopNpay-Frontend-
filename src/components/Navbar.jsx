@@ -5,15 +5,15 @@ import { CartContext } from "../context/CartContext";
 
 // ── Colour tokens ──────────────────────────────────────────────
 const C = {
-  nav:        '#FDFCFB',
-  border:     '#EDE5D8',
-  text:       '#2C2416',
-  textMuted:  '#7A6A55',
+  nav: '#FDFCFB',
+  border: '#EDE5D8',
+  text: '#2C2416',
+  textMuted: '#7A6A55',
   textSubtle: '#A08B70',
-  accent:     '#8B6914',
-  accentBg:   '#FDF8EE',
-  surface:    'rgba(255,255,255,0.95)',
-  dropdown:   '#FFFFFF',
+  accent: '#8B6914',
+  accentBg: '#FDF8EE',
+  surface: 'rgba(255,255,255,0.95)',
+  dropdown: '#FFFFFF',
 };
 
 const Navbar = () => {
@@ -45,11 +45,12 @@ const Navbar = () => {
 
   return (
     <div className="w-full sticky top-0 z-45 px-4 sm:px-6 lg:px-8 pt-4 pb-2" style={{ background: 'transparent' }}>
-      <nav
-        className="max-w-7xl mx-auto rounded-2xl border backdrop-blur-md transition-all duration-300 relative"
+      <motion.nav
+        initial={{ y: -20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.6, ease: "easeOut" }}
+        className="glass-nav max-w-7xl mx-auto rounded-2xl transition-all duration-300 relative"
         style={{
-          background: 'rgba(253, 252, 251, 0.75)',
-          borderColor: 'rgba(237, 229, 216, 0.7)',
           boxShadow: '0 8px 32px rgba(139, 107, 68, 0.08)',
         }}
       >
@@ -342,7 +343,7 @@ const Navbar = () => {
             </motion.div>
           )}
         </AnimatePresence>
-      </nav>
+      </motion.nav>
     </div>
   );
 };

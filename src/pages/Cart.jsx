@@ -1,5 +1,6 @@
 import { useContext, useState } from "react";
 import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { CartContext } from "../context/CartContext";
@@ -35,7 +36,13 @@ const Cart = () => {
   const grandTotal = totalPrice - discountAmount + shipping;
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ background: '#FAFAF8', color: '#2C2416' }}>
+    <motion.div 
+      initial={{ opacity: 0, x: -20 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: 20 }}
+      transition={{ duration: 0.4, ease: "easeOut" }}
+      className="min-h-screen flex flex-col" style={{ background: '#FAFAF8', color: '#2C2416' }}
+    >
       <Navbar />
 
       <main className="flex-grow max-w-7xl mx-auto p-6 py-12 w-full">
@@ -211,7 +218,7 @@ const Cart = () => {
         </div>
       </main>
       <Footer />
-    </div>
+    </motion.div>
   );
 };
 

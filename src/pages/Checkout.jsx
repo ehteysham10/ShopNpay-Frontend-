@@ -388,6 +388,7 @@
 
 import { useContext, useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 import Navbar from "../components/Navbar";
 import { CartContext } from "../context/CartContext";
 import Input from "../components/ui/Input";
@@ -550,7 +551,13 @@ const CheckoutForm = () => {
   const grandTotal = finalPrice + shipping;
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ background: '#FAFAF8', color: '#2C2416' }}>
+    <motion.div 
+      initial={{ opacity: 0, scale: 0.98 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0, scale: 1.02 }}
+      transition={{ duration: 0.4, ease: "easeOut" }}
+      className="min-h-screen flex flex-col" style={{ background: '#FAFAF8', color: '#2C2416' }}
+    >
       <Navbar />
 
       <main className="flex-grow max-w-7xl mx-auto p-6 py-12 w-full">
@@ -769,7 +776,7 @@ const CheckoutForm = () => {
           </div>
         </div>
       </main>
-    </div>
+    </motion.div>
   );
 };
 

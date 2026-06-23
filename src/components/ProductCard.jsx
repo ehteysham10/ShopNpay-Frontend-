@@ -126,7 +126,7 @@ const ProductCard = ({ product }) => {
 
       {/* Image area */}
       <div
-        className="relative overflow-hidden h-44 sm:h-52 md:h-56 w-full flex items-center justify-center"
+        className="relative overflow-hidden h-44 sm:h-52 md:h-56 w-full flex items-center justify-center group/image"
         style={{ background: C.bgImg }}
       >
         {!imgLoaded && <div className="absolute inset-0 shimmer" />}
@@ -137,19 +137,34 @@ const ProductCard = ({ product }) => {
             loading="lazy"
             decoding="async"
             onLoad={() => setImgLoaded(true)}
-            className={`w-full h-full object-cover transition-all duration-500 group-hover:scale-108 ${
+            className={`w-full h-full object-cover transition-all duration-700 group-hover:scale-110 ${
               imgLoaded ? "opacity-100" : "opacity-0"
             }`}
             style={{ transform: imgLoaded ? undefined : 'scale(1)' }}
           />
+          {/* Dark overlay on hover */}
+          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-500 pointer-events-none" />
         </Link>
+        
         {/* Category badge */}
         <span
-          className="absolute top-2.5 left-2.5 z-10 px-2 py-0.5 sm:px-2.5 sm:py-1 text-[9px] sm:text-[10px] font-extrabold rounded-lg shadow-sm tracking-wider uppercase"
+          className="absolute top-2.5 left-2.5 z-10 px-2 py-0.5 sm:px-2.5 sm:py-1 text-[9px] sm:text-[10px] font-extrabold rounded-lg shadow-sm tracking-wider uppercase transition-opacity duration-300 group-hover:opacity-0"
           style={{ background: C.catBg, color: C.textSubtle, border: `1px solid ${C.border}` }}
         >
           {product.category || "General"}
         </span>
+
+        {/* Hover-reveal Add to Cart Button */}
+        <div className="absolute bottom-3 left-3 right-3 z-20 translate-y-16 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 ease-out">
+          <Button
+            onClick={handleAddToCart}
+            variant="primary"
+            className="w-full py-2.5 text-xs font-black rounded-xl shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-transform backdrop-blur-md"
+            style={{ background: 'rgba(139,105,20,0.95)' }}
+          >
+            Add to Cart
+          </Button>
+        </div>
       </div>
 
       {/* Info area */}
@@ -184,23 +199,15 @@ const ProductCard = ({ product }) => {
           )}
         </div>
 
-        <div className="mt-3 sm:mt-4 pt-3" style={{ borderTop: `1px solid ${C.border}` }}>
-          <div className="flex justify-between items-center mb-2.5">
-            <span className="text-[10px] sm:text-xs font-medium uppercase tracking-wide" style={{ color: C.textSubtle }}>
+        <div className="mt-3 pt-3" style={{ borderTop: `1px solid ${C.border}` }}>
+          <div className="flex justify-between items-center">
+            <span className="text-[10px] sm:text-xs font-extrabold uppercase tracking-widest" style={{ color: C.textSubtle }}>
               Price
             </span>
             <span className="text-base sm:text-lg font-black" style={{ color: C.text }}>
               ${product.price}
             </span>
           </div>
-
-          <Button
-            onClick={handleAddToCart}
-            variant="primary"
-            className="w-full py-2 text-xs font-bold rounded-xl"
-          >
-            Add to Cart
-          </Button>
         </div>
       </div>
     </motion.div>
